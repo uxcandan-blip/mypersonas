@@ -1002,63 +1002,152 @@ async function goStep(step){
   document.getElementById('ms2').style.display=step===2?'block':'none';
   document.getElementById('ms3').style.display=step===3?'block':'none';
   updateStepInd(step);
-  var d = appT[appLang];
-  var subs=[d.step1_sub||'Adım 1 / 3 — Temel bilgiler', d.step2_sub||'Adım 2 / 3 — Hafıza', d.step3_sub||'Adım 3 / 3 — Önizle & onayla'];
+  var subs=[t('step1_sub'), t('step2_sub'), t('step3_sub')];
   document.getElementById('modalSub').textContent=subs[step-1];
-  if(step===1) document.getElementById('modalTitle').textContent=editingId!==null?(d.modal_title_edit||'Persona Düzenle'):(d.modal_title_new||'Yeni Persona Oluştur');
+  if(step===1) document.getElementById('modalTitle').textContent=editingId!==null?t('modal_title_edit'):t('modal_title_new');
   if(step===3){
     var isim=document.getElementById('m_isim').value.trim();
     if(!isim){alert(appLang==='en'?'Please enter at least a name.':'Lütfen en az isim girin.');goStep(1);return;}
+    // Always clear and regenerate via AI
     document.getElementById('ms3preview').style.display='none';
     document.getElementById('modalGen').style.display='block';
     document.getElementById('m_motivasyon').value='';
     document.getElementById('m_pain').value='';
     document.getElementById('m_hedef').value='';
-    var KEY=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
-    if(KEY){
-      await generatePersona(KEY);
-    } else {
-      // No API key — use memory text to fill fields manually
-      var memory=document.getElementById('m_memory').value.trim();
-      if(memory){
-        document.getElementById('m_motivasyon').value=memory;
-      }
-    }
+    await runPersonaAI();
     document.getElementById('modalGen').style.display='none';
     showPreview();
+    // Attach debounced listeners to preview fields
+    attachPreviewListeners();
   }
 }
 
-async function generatePersona(KEY){
-  var memory=document.getElementById('m_memory').value.trim();
+// Core AI function — works with or without API key
+async function runPersonaAI(){
   var isim=document.getElementById('m_isim').value.trim();
   var rol=document.getElementById('m_rol').value.trim();
   var yas=document.getElementById('m_yas').value.trim();
   var sehir=document.getElementById('m_sehir').value.trim();
+  var memory=document.getElementById('m_memory')?document.getElementById('m_memory').value.trim():'';
+  // For edit mode, also grab existing values as context
+  var existingMotiv=document.getElementById('m_motivasyon').value.trim();
+  var existingPain=document.getElementById('m_pain').value.trim();
+  var existingGoal=document.getElementById('m_hedef').value.trim();
   var lang=appLang==='en'?'English':'Türkçe';
-  var prompt='Sen bir UX araştırmacısısın. Aşağıdaki bilgilere dayanarak bu kişinin gerçekçi bir kullanıcı persona profilini oluştur. Yanıtı '+lang+' olarak ver.\n\nKişi bilgileri:\n'+(isim?'- İsim: '+isim+'\n':'')+(rol?'- Meslek: '+rol+'\n':'')+(yas?'- Yaş: '+yas+'\n':'')+(sehir?'- Şehir: '+sehir+'\n':'')+(sel.tip?'- Kullanıcı tipi: '+sel.tip+'\n':'')+(memory?'\nBu kişi hakkında notlar:\n'+memory+'\n':'')+'\nBu kişinin motivasyonunu, acı noktalarını ve hedefini bir kullanıcı araştırmacısı gözüyle yaz. Sadece JSON formatında yanıt ver, başka hiçbir şey yazma:\n{"isim":"...","sehir":"...","yas":XX,"rol":"...","motivasyon":"...","pain":"...","hedef":"...","tech":"Çok düşük veya Low/Orta veya Medium/İyi veya High"}';
-  try{
-    var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,messages:[{role:"user",content:prompt}]})});
-    var data=await res.json();
-    if(!data.content||!data.content[0]) return;
-    var text=data.content.map(function(b){return b.text||'';}).join('').trim();
-    var json=JSON.parse(text.replace(/```json|```/g,'').trim());
-    if(json.isim&&!isim) document.getElementById('m_isim').value=json.isim;
-    if(json.rol&&!rol) document.getElementById('m_rol').value=json.rol;
-    if(json.yas&&!yas) document.getElementById('m_yas').value=json.yas;
-    if(json.sehir&&!sehir) document.getElementById('m_sehir').value=json.sehir;
-    if(json.motivasyon) document.getElementById('m_motivasyon').value=json.motivasyon;
-    if(json.pain) document.getElementById('m_pain').value=json.pain;
-    if(json.hedef) document.getElementById('m_hedef').value=json.hedef;
-    if(json.tech) sel.tech=json.tech;
-    if(memory) window._pendingMemory=memory;
-  }catch(e){
-    console.error('generatePersona:',e);
-    // Fallback — put memory into motivation field
-    var mem=document.getElementById('m_memory').value.trim();
-    if(mem) document.getElementById('m_motivasyon').value=mem;
+  var KEY=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
+
+  var prompt='Sen deneyimli bir UX araştırmacısısın. Aşağıdaki kişi hakkındaki tüm bilgileri bir UX uzmanı gözüyle derinlemesine analiz et. Bu kişinin dijital ürünleri nasıl kullandığını, ne hissettiğini, nerede takıldığını düşün. Yanıtı '+lang+' dilinde ver.\n\n'+
+    '=== KİŞİ BİLGİLERİ ===\n'+
+    (isim?'İsim: '+isim+'\n':'')+(rol?'Meslek: '+rol+'\n':'')+(yas?'Yaş: '+yas+'\n':'')+(sehir?'Şehir: '+sehir+'\n':'')+
+    (sel.tip?'Kullanıcı tipi: '+sel.tip+'\n':'')+
+    (memory?'\n=== BU KİŞİ HAKKINDA BİLİNENLER ===\n'+memory+'\n':'')+
+    (existingMotiv?'\n=== MEVCUT PROFİL BİLGİLERİ (güncelle/zenginleştir) ===\nMotivasyon: '+existingMotiv+'\nAcı noktaları: '+existingPain+'\nHedef: '+existingGoal+'\n':'')+
+    '\n=== GÖREV ===\n'+
+    'Bu kişinin UX profilini oluştur. Her alan için 1-2 güçlü, spesifik cümle yaz. Klişelerden kaçın. Gerçek bir kullanıcı gibi düşün.\n\n'+
+    'Sadece JSON formatında yanıt ver:\n'+
+    '{"motivasyon":"...","pain":"...","hedef":"...","tech":"Çok düşük/Orta/İyi"}';
+
+  if(KEY){
+    try{
+      var res=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","x-api-key":KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,messages:[{role:"user",content:prompt}]})
+      });
+      var data=await res.json();
+      if(!data.content||!data.content[0]) throw new Error('Empty response');
+      var text=data.content.map(function(b){return b.text||'';}).join('').trim();
+      var json=JSON.parse(text.replace(/```json|```/g,'').trim());
+      if(json.motivasyon) document.getElementById('m_motivasyon').value=json.motivasyon;
+      if(json.pain) document.getElementById('m_pain').value=json.pain;
+      if(json.hedef) document.getElementById('m_hedef').value=json.hedef;
+      if(json.tech) sel.tech=json.tech;
+      if(memory) window._pendingMemory=memory;
+      return;
+    }catch(e){ console.error('AI error:',e); }
   }
+
+  // Fallback — smart rule-based analysis when no API key
+  var memLower=(memory||'').toLowerCase();
+  var rolLower=(rol||'').toLowerCase();
+  var yasNum=parseInt(yas)||35;
+
+  // Determine tech level from clues
+  if(!sel.tech){
+    if(memLower.indexOf('teknoloji')>-1||memLower.indexOf('okur yazarlığı yok')>-1||memLower.indexOf('bilgisayar')>-1||yasNum>55) sel.tech='Çok düşük';
+    else if(memLower.indexOf('telefon')>-1||memLower.indexOf('mobil')>-1) sel.tech='Orta';
+    else sel.tech='Orta';
+  }
+
+  // Build motivation from memory
+  var motiv='';
+  var pain='';
+  var hedef='';
+  if(memory){
+    // Use memory as raw material for smart analysis
+    if(appLang==='en'){
+      motiv='Based on what is known: '+memory+'. This shapes their primary drive when using digital products.';
+      pain='May struggle with interfaces that don\'t accommodate their background. '+(memLower.indexOf('okur yazarlığı yok')>-1?'Low literacy means icons and visuals matter more than text.':'Complex flows and too much text create friction.');
+      hedef='Wants to complete tasks quickly and independently, without needing help or explanation.';
+    } else {
+      // Turkish smart analysis
+      if(memLower.indexOf('okur yazarlığı yok')>-1||memLower.indexOf('okuma yazma')>-1){
+        motiv='Görsel ve simge tabanlı arayüzlerle iş yapmak ister. Metin yerine görselle yönlendirme tercih eder.';
+        pain='Uzun açıklama metinleri, küçük fontlar ve yazı yoğun arayüzler ciddi engel oluşturur.';
+        hedef='Yardım almadan, bağımsız şekilde temel işlemleri tamamlamak.';
+      } else if(memLower.indexOf('akıllı')>-1||memLower.indexOf('zeki')>-1){
+        motiv='Analitik düşünür, mantığa dayalı kararlar alır. Ürünün nasıl çalıştığını anlamak ister.';
+        pain='Yüzeysel açıklamalar ve şeffaf olmayan sistemler güvenini zedeler.';
+        hedef='Kontrol hissini kaybetmeden, hızlı ve doğru sonuçlara ulaşmak.';
+      } else {
+        motiv='Dijital ürünlerde hızlı ve zahmetsiz deneyim arar. '+(rol?rol+' olarak ':'')+' pratik çözümler önceliği.';
+        pain='Karmaşık akışlar, gereksiz adımlar ve belirsiz yönlendirmeler hayal kırıklığı yaratır.';
+        hedef='Az adımda, güvenle hedefe ulaşmak.';
+      }
+    }
+  } else {
+    if(appLang==='en'){
+      motiv=(rol||'This person')+' looks for efficient, trustworthy digital tools that respect their time.';
+      pain='Overly complex interfaces and unclear next steps create friction.';
+      hedef='Complete tasks quickly and confidently without needing support.';
+    } else {
+      motiv=(rol||'Bu kişi')+', dijital araçlardan hız ve güvenilirlik bekler.';
+      pain='Karmaşık arayüzler ve belirsiz yönlendirmeler hayal kırıklığı yaratır.';
+      hedef='Destek almadan hızlı ve güvenle görevlerini tamamlamak.';
+    }
+  }
+
+  document.getElementById('m_motivasyon').value=motiv;
+  document.getElementById('m_pain').value=pain;
+  document.getElementById('m_hedef').value=hedef;
+  if(memory) window._pendingMemory=memory;
 }
+
+// Debounce timer for live preview updates
+var previewDebounceTimer=null;
+function attachPreviewListeners(){
+  ['m_motivasyon','m_pain','m_hedef','m_isim','m_rol','m_yas'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    el.oninput=function(){
+      showPreview();
+      clearTimeout(previewDebounceTimer);
+      previewDebounceTimer=setTimeout(function(){
+        var KEY=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
+        if(KEY && (id==='m_isim'||id==='m_rol'||id==='m_yas')){
+          // Re-run AI only if core identity fields change, not the analysis fields themselves
+          document.getElementById('modalGen').style.display='block';
+          runPersonaAI().then(function(){
+            document.getElementById('modalGen').style.display='none';
+            showPreview();
+          });
+        }
+      }, 1500);
+    };
+  });
+}
+
+async function generatePersona(KEY){ await runPersonaAI(); }
 
 function showPreview(){
   var isim=document.getElementById('m_isim').value;
@@ -1069,28 +1158,42 @@ function showPreview(){
   document.getElementById('prevEmoji').textContent=emoji;
   document.getElementById('prevName').textContent=isim||'—';
   document.getElementById('prevRole').textContent=rol||'—';
-  document.getElementById('prevMeta').textContent=[yas?yas+' yaş':'',sehir,sel.tech].filter(Boolean).join(' · ');
+  var meta=[yas?(yas+(appLang==='en'?' y.o.':' yaş')):'',sehir,sel.tech].filter(Boolean).join(' · ');
+  document.getElementById('prevMeta').textContent=meta;
   document.getElementById('ms3preview').style.display='block';
 }
 
 function mSel(key,val,el){sel[key]=val;el.parentElement.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active');});el.classList.add('active');}
 
-function openAdd(){editingId=null;resetModal();document.getElementById('modalDelBtn').style.display='none';document.getElementById('personaModal').className='modal-overlay open';}
+function openAdd(){
+  editingId=null;
+  resetModal();
+  document.getElementById('modalDelBtn').style.display='none';
+  document.getElementById('personaModal').className='modal-overlay open';
+}
 
 function openEdit(id){
   var p=personas.find(function(x){return x.id===id;});
   if(!p) return;
-  editingId=id;resetModal();
-  document.getElementById('modalTitle').textContent='Persona Düzenle';
+  editingId=id;
+  resetModal();
+  document.getElementById('modalTitle').textContent=t('modal_title_edit');
   document.getElementById('modalDelBtn').style.display='inline-flex';
-  document.getElementById('modalSaveBtn').textContent='Değişiklikleri Kaydet';
+  document.getElementById('modalSaveBtn').textContent=t('save_btn');
+  // Pre-fill with existing persona data
   document.getElementById('m_isim').value=p.name||'';
   document.getElementById('m_rol').value=p.role||'';
   document.getElementById('m_yas').value=p.age||'';
   document.getElementById('m_sehir').value=p.city||'';
+  // Pre-fill memory from saved notes
+  var savedNotes=localStorage.getItem('pd_notes_'+id)||'';
+  if(document.getElementById('m_memory')) document.getElementById('m_memory').value=savedNotes;
+  // Pre-fill current analysis (will be re-run by AI in step 3)
   document.getElementById('m_motivasyon').value=p.motivation||'';
   document.getElementById('m_pain').value=p.pain||'';
   document.getElementById('m_hedef').value=p.goal||'';
+  if(p.tech) sel.tech=p.tech;
+  // Go directly to step 3 which will re-run AI with all context
   goStep(3);
   document.getElementById('personaModal').className='modal-overlay open';
 }
@@ -1155,7 +1258,7 @@ function renderFlowList(){
   var list=document.getElementById('flowList'),badge=document.getElementById('imgBadge'),zone=document.getElementById('uploadZone');
   document.getElementById('imgError').className='field-error';
   if(flowItems.length===0){list.innerHTML='';badge.style.display='none';zone.className='upload-zone';document.getElementById('uploadIcon').textContent='🖼️';document.getElementById('uploadText').innerHTML='Ekran görüntüsü veya wireframe yükle<br><strong>Tıkla veya sürükle bırak</strong> · Birden fazla seçebilirsin';return;}
-  badge.style.display='inline';badge.textContent=flowItems.length+' ekran';zone.className='upload-zone has-files';document.getElementById('uploadIcon').textContent='✅';document.getElementById('uploadText').innerHTML='<strong>'+flowItems.length+' ekran yüklendi</strong> · Daha fazla eklemek için tıkla';
+  badge.style.display='inline';badge.textContent=t('upload_badge').replace('{n}',flowItems.length);zone.className='upload-zone has-files';document.getElementById('uploadIcon').textContent='✅';document.getElementById('uploadText').innerHTML=t('upload_done').replace('{n}',flowItems.length);
   list.innerHTML=flowItems.map(function(item,i){
     return '<div class="flow-item"><div class="flow-num">'+(i+1)+'</div><img class="flow-thumb" src="'+item.src+'" onclick="openLightbox(\''+item.src+'\')"><input class="flow-label-input" type="text" placeholder="Bu ekran ne?" value="'+item.label+'" oninput="flowItems['+i+'].label=this.value"><div class="flow-actions">'+(i>0?'<button class="fab" onclick="moveItem('+i+',-1)">↑</button>':'')+(i<flowItems.length-1?'<button class="fab" onclick="moveItem('+i+',1)">↓</button>':'')+'<button class="fab del" onclick="removeItem('+i+')">✕</button></div></div>';
   }).join('');
@@ -1273,7 +1376,7 @@ async function runTest(){
   if(flowItems.length>0){screensHtml='<div class="tested-screens"><div class="tested-screens-label">'+t('tested_label')+'</div><div class="tested-screens-list">'+flowItems.map(function(item){return'<div class="tested-thumb" onclick="openLightbox(\''+item.src+'\')"><img src="'+item.src+'" alt=""><div class="tested-thumb-label">'+(item.label||(appLang==='en'?'Screen':'Ekran'))+'</div></div>';}).join('')+'</div></div>';}
   document.getElementById('resultContainer').innerHTML='<div class="results-actions"><button class="results-action-btn primary" onclick="window.print()">'+t('results_pdf')+'</button><button class="new-test-btn" onclick="resetTest()">'+t('results_new')+'</button></div>'+screensHtml+'<div class="results-wrap">'+summaryHtml+accHtml+'</div>';
   if(results.length===1) toggleAcc(0);
-  saveHistory({date:new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),scenario:scenario,personaNames:selected.map(function(p){return p.name;}),html:document.getElementById('resultContainer').innerHTML});
+  saveHistory({date:new Date().toLocaleDateString(appLang==='en'?'en-GB':'tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),scenario:scenario,personaNames:selected.map(function(p){return p.name;}),html:document.getElementById('resultContainer').innerHTML});
   btn.disabled=false;
 }
 
@@ -1546,7 +1649,7 @@ function applyAppLang() {
 function closeOnboarding(){
   document.getElementById('onboardOverlay').classList.remove('open');
   localStorage.setItem('onboarded','1');
-  openAdd();
+  setTimeout(function(){ openAdd(); }, 300);
 }
 function skipOnboarding(){
   document.getElementById('onboardOverlay').classList.remove('open');
