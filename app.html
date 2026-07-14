@@ -710,8 +710,8 @@ function renderPersonas() {
       '<div class="persona-name">'+p.name+'</div>'+
       '<div class="persona-role">'+p.role+'</div>'+
       '<div class="card-btns">'+
-        '<button class="card-btn '+(isSel?'selected-btn':'')+'" id="selbtn-'+p.id+'">'+(isSel?'✓ Seçili':'Seç')+'</button>'+
-        '<button class="card-btn detail-btn" id="detbtn-'+p.id+'">Detay</button>'+
+        '<button class="card-btn '+(isSel?'selected-btn':'')+'" id="selbtn-'+p.id+'">'+(isSel?t('selected_btn'):t('select_btn'))+'</button>'+
+        '<button class="card-btn detail-btn" id="detbtn-'+p.id+'">'+t('detail_btn')+'</button>'+
       '</div>';
     // Seç
     card.querySelector('#selbtn-'+p.id).addEventListener('click', function(e) {
@@ -736,7 +736,7 @@ function renderPersonas() {
   // Add card
   var add = document.createElement('div');
   add.className = 'persona-card add-card';
-  add.innerHTML = '<div style="font-size:22px;">+</div><div style="font-size:12px;font-weight:500;">Yeni persona</div>';
+  add.innerHTML = '<div style="font-size:22px;">+</div><div style="font-size:12px;font-weight:500;">'+t('new_persona')+'</div>';
   add.onclick = openAdd;
   grid.appendChild(add);
   updateSelCount();
@@ -873,7 +873,7 @@ function saveKimlik() {
 
 function renderPdChat(history) {
   var el=document.getElementById('pd-chat-msgs');
-  if(!history.length){el.innerHTML='<div style="font-size:13px;color:var(--ink-ghost);padding:1rem 0;">Henüz not yok. Persona hakkında bir şeyler yaz.</div>';return;}
+  if(!history.length){el.innerHTML='<div style="font-size:13px;color:var(--ink-ghost);padding:1rem 0;">'+t('pd_chat_empty')+'</div>';return;}
   el.innerHTML=history.map(function(m){
     return '<div class="pd-chat-row '+m.role+'"><div class="pd-chat-bubble">'+m.content+'</div></div>';
   }).join('');
@@ -883,7 +883,7 @@ function renderPdChat(history) {
 async function sendPdChat() {
   if(pdCurrentId===null) return;
   var KEY=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
-  if(!KEY){alert('API key eksik!');return;}
+  if(!KEY){alert(appLang==='en'?'API key missing!':'API key eksik!');return;}
   var input=document.getElementById('pd-chat-in');
   var text=input.value.trim();
   if(!text) return;
@@ -930,7 +930,7 @@ function renderPdHistory(pid) {
   var h=JSON.parse(localStorage.getItem('ux_test_history')||'[]');
   var rel=h.filter(function(item){return item.personaNames&&item.personaNames.indexOf(p.name)>-1;});
   var el=document.getElementById('pd-hist-list');
-  if(!rel.length){el.innerHTML='<div class="pd-empty">'+p.name+' henüz test edilmedi.</div>';return;}
+  if(!rel.length){el.innerHTML='<div class="pd-empty">'+t('pd_no_history')+'</div>';return;}
   el.innerHTML=rel.map(function(item){
     var idx=h.indexOf(item);
     return '<div class="pd-history-item" onclick="loadFromPd('+idx+')">'+
@@ -1107,7 +1107,7 @@ function deleteEditing(){
 
 function savePersona(){
   var isim=document.getElementById('m_isim').value.trim(),rol=document.getElementById('m_rol').value.trim();
-  if(!isim||!rol){alert('İsim ve meslek zorunlu.');return;}
+  if(!isim||!rol){alert(appLang==='en'?'Name and job are required.':'İsim ve meslek zorunlu.');return;}
   var bgs=["#E6F1FB","#EAF3DE","#FAEEDA","#F1EFE8","#EEEDFE","#F0FFF4"];
   var icon=pickEmoji(document.getElementById('m_yas').value,rol,sel.tech);
   if(editingId!==null){
@@ -1183,13 +1183,15 @@ function showSilentScreen(selected){
   document.getElementById('silentScreen').className='silent-screen show';
   document.getElementById('personaProgress').innerHTML=selected.map(function(p){return '<div class="persona-pip" id="pip-'+p.id+'"><span>'+p.icon+'</span>'+p.name+'</div>';}).join('');
   document.getElementById('statusFeed').innerHTML='';
-  document.getElementById('silentSubtitle').textContent='Kullanıcılar gözlemleniyor';
+  document.getElementById('silentSubtitle').textContent=appLang==='en'?'Users are being observed':'Kullanıcılar gözlemleniyor';
 }
 function updateSilentForPersona(p,idx,total){
   document.querySelectorAll('.persona-pip').forEach(function(pip){pip.classList.remove('active');});
   var ap=document.getElementById('pip-'+p.id);if(ap)ap.classList.add('active');
-  document.getElementById('silentSubtitle').textContent=(idx+1)+' / '+total+' kullanıcı test ediliyor';
-  var msgs=[p.icon+' '+p.name+' ile görüşme başladı','Ekrana ilk bakışını yapıyor...','İlk tepkileri kaydediliyor','Kullanıcı ekranla ilgili detayları değerlendiriyor...','Sorunlu noktalar işaretleniyor','Notlar derleniyor...'];
+  document.getElementById('silentSubtitle').textContent=(idx+1)+' / '+total+(appLang==='en'?' user being tested':' kullanıcı test ediliyor');
+  var msgs=appLang==='en'
+    ?[p.icon+' Session with '+p.name+' started','Taking first look at the screen...','Initial reactions recorded','User evaluating screen details...','Problem areas being marked','Notes being compiled...']
+    :[p.icon+' '+p.name+' ile görüşme başladı','Ekrana ilk bakışını yapıyor...','İlk tepkileri kaydediliyor','Kullanıcı ekranla ilgili detayları değerlendiriyor...','Sorunlu noktalar işaretleniyor','Notlar derleniyor...'];
   clearST();
   var feed=document.getElementById('statusFeed');feed.innerHTML='';
   msgs.forEach(function(msg,i){
@@ -1219,9 +1221,9 @@ async function callAPI(persona,scenario,flowDesc){
 
 async function runTest(){
   var ACTIVE_KEY=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
-  if(!ACTIVE_KEY){alert('API key eksik!');return;}
+  if(!ACTIVE_KEY){alert(appLang==='en'?'API key missing!':'API key eksik!');return;}
   var selected=mode==='single'?(singleSel!==null?[personas.find(function(p){return p.id===singleSel;})]:[]):personas.filter(function(p){return multiSel.indexOf(p.id)>-1;});
-  if(selected.length===0){alert('Lütfen bir persona seç.');return;}
+  if(selected.length===0){alert(appLang==='en'?'Please select a persona.':'Lütfen bir persona seç.');return;}
   var hasErr=false;
   if(flowItems.length===0){document.getElementById('imgError').className='field-error show';hasErr=true;}
   var scenario=document.getElementById('screenDesc').value.trim();
@@ -1268,8 +1270,8 @@ async function runTest(){
     else{accHtml+='<div class="acc-card"><div class="acc-header" onclick="toggleAcc('+idx+')"><div class="acc-persona-icon">'+r.persona.icon+'</div><div><div class="acc-persona-name">'+r.persona.name+'</div><div class="acc-persona-role">'+r.persona.role+'</div></div><div class="acc-stars">'+stars(r.ratings.genel)+'</div><span class="acc-toggle" id="acc-toggle-'+idx+'">▼</span></div><div class="acc-body" id="acc-body-'+idx+'"><div class="acc-content">'+r.text+'</div><div class="acc-rating-row"><div class="rating-item"><div class="rating-label">Genel</div><div class="rating-stars">'+stars(r.ratings.genel)+'</div></div><div class="rating-item"><div class="rating-label">Kullanım</div><div class="rating-stars">'+stars(r.ratings["kullanım_kolaylığı"])+'</div></div><div class="rating-item"><div class="rating-label">Güven</div><div class="rating-stars">'+stars(r.ratings.güven)+'</div></div><div class="rating-item"><div class="rating-label">Hız</div><div class="rating-stars">'+stars(r.ratings.hız)+'</div></div></div></div></div>';}
   });
   var screensHtml='';
-  if(flowItems.length>0){screensHtml='<div class="tested-screens"><div class="tested-screens-label">Test edilen ekranlar</div><div class="tested-screens-list">'+flowItems.map(function(item){return'<div class="tested-thumb" onclick="openLightbox(\''+item.src+'\')"><img src="'+item.src+'" alt=""><div class="tested-thumb-label">'+(item.label||'Ekran')+'</div></div>';}).join('')+'</div></div>';}
-  document.getElementById('resultContainer').innerHTML='<div class="results-actions"><button class="results-action-btn primary" onclick="window.print()">⬇ PDF indir</button><button class="new-test-btn" onclick="resetTest()">← Yeni test yap</button></div>'+screensHtml+'<div class="results-wrap">'+summaryHtml+accHtml+'</div>';
+  if(flowItems.length>0){screensHtml='<div class="tested-screens"><div class="tested-screens-label">'+t('tested_label')+'</div><div class="tested-screens-list">'+flowItems.map(function(item){return'<div class="tested-thumb" onclick="openLightbox(\''+item.src+'\')"><img src="'+item.src+'" alt=""><div class="tested-thumb-label">'+(item.label||(appLang==='en'?'Screen':'Ekran'))+'</div></div>';}).join('')+'</div></div>';}
+  document.getElementById('resultContainer').innerHTML='<div class="results-actions"><button class="results-action-btn primary" onclick="window.print()">'+t('results_pdf')+'</button><button class="new-test-btn" onclick="resetTest()">'+t('results_new')+'</button></div>'+screensHtml+'<div class="results-wrap">'+summaryHtml+accHtml+'</div>';
   if(results.length===1) toggleAcc(0);
   saveHistory({date:new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),scenario:scenario,personaNames:selected.map(function(p){return p.name;}),html:document.getElementById('resultContainer').innerHTML});
   btn.disabled=false;
@@ -1309,8 +1311,8 @@ function renderHistoryDrawer(){
   var h=JSON.parse(localStorage.getItem('ux_test_history')||'[]');
   var el=document.getElementById('historyDrawerBody');
   updateHistoryCount();
-  if(!h.length){el.innerHTML='<div class="drawer-empty">Henüz test yok.</div>';return;}
-  el.innerHTML='<span class="drawer-clear" onclick="doClearHistory()">Geçmişi temizle</span>'+h.map(function(item,i){return'<div class="drawer-item" onclick="loadHistoryItem('+i+')"><div class="drawer-item-header"><span class="drawer-item-title">'+(item.scenario||'Test').substring(0,55)+'</span><span class="drawer-item-date">'+item.date+'</span></div><div class="drawer-item-chips">'+item.personaNames.map(function(n){return'<span class="drawer-chip">'+n+'</span>';}).join('')+'</div></div>';}).join('');
+  if(!h.length){el.innerHTML='<div class="drawer-empty">'+t('history_empty')+'</div>';return;}
+  el.innerHTML='<span class="drawer-clear" onclick="doClearHistory()">'+t('history_clear')+'</span>'+h.map(function(item,i){return'<div class="drawer-item" onclick="loadHistoryItem('+i+')"><div class="drawer-item-header"><span class="drawer-item-title">'+(item.scenario||'Test').substring(0,55)+'</span><span class="drawer-item-date">'+item.date+'</span></div><div class="drawer-item-chips">'+item.personaNames.map(function(n){return'<span class="drawer-chip">'+n+'</span>';}).join('')+'</div></div>';}).join('');
 }
 function loadHistoryItem(idx){
   var h=JSON.parse(localStorage.getItem('ux_test_history')||'[]');
@@ -1363,6 +1365,7 @@ var appT = {
     pd_chat_ph:'Örn: Mobilde alışveriş yapıyor, kargo ücretinden kaçıyor...',
     pd_send:'Gönder', pd_loading:'Yapay zeka bu bilginin persona için katkısını düşünüyor...',
     pd_no_history:'Bu persona henüz test edilmedi.',
+    pd_chat_empty:'Henüz not yok. Persona hakkında bir şeyler yaz.',
     pd_test_btn:'Bu personayla test yap',
     history_title:'Geçmiş testler', history_empty:'Henüz test yok.',
     history_clear:'Geçmişi temizle',
@@ -1411,6 +1414,7 @@ var appT = {
     pd_chat_ph:'E.g. Shops on mobile, avoids shipping costs...',
     pd_send:'Send', pd_loading:'AI is thinking about how this information contributes to the persona...',
     pd_no_history:'This persona has not been tested yet.',
+    pd_chat_empty:'No notes yet. Write something about this persona.',
     pd_test_btn:'Test with this persona',
     history_title:'Test history', history_empty:'No tests yet.',
     history_clear:'Clear history',
@@ -1429,6 +1433,8 @@ var appT = {
 
 var appLang = localStorage.getItem('mp_lang') || 'tr';
 
+function t(key) { return (appT[appLang] && appT[appLang][key] !== undefined) ? appT[appLang][key] : (appT['tr'][key] || key); }
+
 function setAppLang(lang) {
   appLang = lang;
   localStorage.setItem('mp_lang', lang);
@@ -1440,17 +1446,100 @@ function setAppLang(lang) {
 }
 
 function applyAppLang() {
-  var d = appT[appLang];
+  // Static elements with data-i18n
   document.querySelectorAll('[data-i18n]').forEach(function(el) {
     var key = el.getAttribute('data-i18n');
-    if(d[key] !== undefined) el.innerHTML = d[key];
+    el.innerHTML = t(key);
   });
-  // Update dynamic elements
-  var si1=document.getElementById('sil1'); if(si1) si1.textContent=d.si1;
-  var si2=document.getElementById('sil2'); if(si2) si2.textContent=d.si2;
-  var si3=document.getElementById('sil3'); if(si3) si3.textContent=d.si3;
-  document.getElementById('personaLabel').textContent = mode==='single' ? d.persona_label : d.persona_label_multi;
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  // Step indicator labels
+  var si1=document.getElementById('sil1'); if(si1) si1.textContent=t('si1');
+  var si2=document.getElementById('sil2'); if(si2) si2.textContent=t('si2');
+  var si3=document.getElementById('sil3'); if(si3) si3.textContent=t('si3');
+  // Modal labels
+  document.getElementById('personaLabel').textContent = mode==='single' ? t('persona_label') : t('persona_label_multi');
+  // Mode tabs
+  var tabs = document.querySelectorAll('.mode-tab');
+  if(tabs[0]) tabs[0].textContent = t('tab_single');
+  if(tabs[1]) tabs[1].textContent = t('tab_multi');
+  // Run button
+  var rb = document.getElementById('runBtn'); if(rb) rb.textContent = t('run_btn');
+  // Upload zone
+  var ut = document.getElementById('uploadText');
+  if(ut) ut.innerHTML = t('upload_text');
+  // Textarea placeholders
+  var sd = document.getElementById('screenDesc');
+  if(sd) sd.placeholder = t('scenario_placeholder');
+  var mm = document.getElementById('m_memory');
+  if(mm) mm.placeholder = t('memory_placeholder');
+  var mc = document.getElementById('pd-chat-in');
+  if(mc) mc.placeholder = t('pd_chat_ph');
+  // Step subtitles in modal
+  var subs = [t('step1_sub'), t('step2_sub'), t('step3_sub')];
+  var ms = document.getElementById('modalSub');
+  if(ms) {
+    var cur = ['ms1','ms2','ms3'].indexOf(['ms1','ms2','ms3'].find(function(id){ return document.getElementById(id) && document.getElementById(id).style.display!=='none'; }));
+    if(cur>=0) ms.textContent = subs[cur];
+  }
+  // Modal field labels
+  var labels = {
+    'field_isim': document.querySelector('label[for="m_isim"], #ms1 .modal-label:nth-of-type(1)'),
+  };
+  // Re-render dynamic components
   renderPersonas();
+  renderFlowList();
+  // History drawer title
+  var ht = document.querySelector('.drawer-title'); if(ht) ht.textContent = t('history_title');
+  // Onboarding
+  var ob = document.getElementById('onboardOverlay');
+  if(ob) {
+    var obt = ob.querySelector('h2'); if(obt) obt.textContent = t('onboard_title');
+    var obs = ob.querySelector('.onboard-header p'); if(obs) obs.textContent = t('onboard_sub');
+    var obbtn = ob.querySelector('.onboard-btn'); if(obbtn) obbtn.textContent = t('onboard_btn');
+    var obskip = ob.querySelector('.onboard-skip'); if(obskip) obskip.textContent = t('onboard_skip');
+    var obi = ob.querySelector('.onboard-tip'); if(obi) obi.innerHTML = t('onboard_tip');
+    var steps = ob.querySelectorAll('.onboard-step');
+    var skeys = [['onboard_s1_title','onboard_s1_desc'],['onboard_s2_title','onboard_s2_desc'],['onboard_s3_title','onboard_s3_desc']];
+    steps.forEach(function(s,i){ if(skeys[i]){ var tt=s.querySelector('.onboard-step-title'); var dd=s.querySelector('.onboard-step-desc'); if(tt)tt.textContent=t(skeys[i][0]); if(dd)dd.textContent=t(skeys[i][1]); } });
+  }
+  // Silent screen title
+  var st = document.querySelector('.silent-title'); if(st) st.textContent = t('silent_title');
+  // Profile drawer tabs
+  var pt1=document.getElementById('tab-kimlik'); if(pt1) pt1.textContent=t('pd_tab1');
+  var pt2=document.getElementById('tab-notlar'); if(pt2) pt2.textContent=t('pd_tab2');
+  var pt3=document.getElementById('tab-gecmis'); if(pt3) pt3.textContent=t('pd_tab3');
+  var ptbt=document.getElementById('pd-test-btn'); if(ptbt) ptbt.textContent=t('pd_test_btn');
+  var pdsb=document.getElementById('pd-save-btn'); if(pdsb && pdsb.textContent.trim()!=='') pdsb.textContent=t('pd_save');
+  var pdsend=document.getElementById('pd-chat-btn'); if(pdsend) pdsend.textContent=t('pd_send');
+  // Info bar
+  var ib = document.querySelector('.info-bar span'); if(ib) ib.innerHTML=t('info_bar');
+  var hl = document.querySelector('.help-link'); if(hl) hl.textContent=t('help_link');
+  // Step card titles
+  var sc1=document.querySelector('#testSection .step:nth-child(1) .step-title'); if(sc1) sc1.textContent=t('step1_title');
+  var sc2=document.querySelector('#testSection .step:nth-child(2) .step-title'); if(sc2) sc2.textContent=t('step2_title');
+  // Modal chip labels
+  var tipGroup=document.getElementById('m_tipGroup');
+  if(tipGroup){var chips=tipGroup.querySelectorAll('.chip');if(chips[0])chips[0].innerHTML=t('tip1');if(chips[1])chips[1].innerHTML=t('tip2');if(chips[2])chips[2].innerHTML=t('tip3');}
+  // Modal memory label
+  var memLbl=document.querySelector('#ms2 .modal-label'); if(memLbl) memLbl.textContent=t('memory_label');
+  var memInfo=document.querySelector('#ms2 div[style*="accent-soft"]'); if(memInfo) memInfo.innerHTML=t('memory_info');
+  // Modal buttons
+  document.querySelectorAll('.modal-cancel').forEach(function(b,i){ b.textContent=i===0?t('cancel'):t('back'); });
+  var nextBtns=document.querySelectorAll('#ms1 .modal-primary,#ms2 .modal-primary'); nextBtns.forEach(function(b){b.textContent=t('next');});
+  var savBtn=document.getElementById('modalSaveBtn'); if(savBtn) savBtn.textContent=editingId!==null?t('save_btn'):t('create_btn');
+  var delBtn=document.getElementById('modalDelBtn'); if(delBtn) delBtn.textContent=t('delete_btn');
+  // Select all button
+  var toggleAllBtn=document.getElementById('toggleAllBtn');
+  if(toggleAllBtn) toggleAllBtn.textContent = multiSel.length===personas.length ? t('deselect_all') : t('select_all');
+  // History drawer clear
+  var hclr=document.querySelector('.drawer-clear'); if(hclr) hclr.textContent=t('history_clear');
+  // AI generating text
+  var gt=document.getElementById('genTxt'); if(gt) gt.textContent=t('ai_generating');
+  // Result buttons if visible
+  var ra=document.querySelector('.results-action-btn.primary'); if(ra) ra.textContent=t('results_pdf');
+  var nt=document.querySelector('.new-test-btn'); if(nt) nt.textContent=t('results_new');
 }
 
 // ── Onboarding ──
