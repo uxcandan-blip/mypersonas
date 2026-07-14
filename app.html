@@ -286,10 +286,30 @@ input[type=text]:focus,input[type=password]:focus{border-color:var(--accent);bac
 .pd-foot-btn.danger{border-color:#fca5a5;color:#dc2626;background:#fff5f5;}
 .pd-foot-btn.danger:hover{background:#fee2e2;}
 
-@media print{
-  .run-btn,.results-actions,.card-btns,.info-bar,.api-warning,.history-btn,.mode-tabs{display:none!important}
-  .acc-body{display:block!important}
-}
+/* Onboarding */
+.onboard-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:400;display:none;align-items:center;justify-content:center;padding:1rem;}
+.onboard-overlay.open{display:flex;}
+.onboard-modal{background:var(--surface);border-radius:24px;padding:0;width:100%;max-width:500px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.2);}
+.onboard-steps{display:flex;flex-direction:column;}
+.onboard-header{background:var(--accent);padding:2rem 2rem 1.5rem;text-align:center;}
+.onboard-header-emoji{font-size:48px;margin-bottom:12px;}
+.onboard-header h2{font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:6px;}
+.onboard-header p{font-size:14px;color:rgba(255,255,255,0.75);font-weight:300;}
+.onboard-body{padding:1.75rem 2rem;}
+.onboard-step{display:flex;gap:14px;align-items:flex-start;margin-bottom:1.25rem;}
+.onboard-step:last-child{margin-bottom:0;}
+.onboard-step-num{width:32px;height:32px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.onboard-step-text{flex:1;}
+.onboard-step-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;letter-spacing:-0.01em;}
+.onboard-step-desc{font-size:13px;color:var(--ink-soft);font-weight:300;line-height:1.5;}
+.onboard-tip{background:var(--accent-soft);border-radius:var(--rs);padding:12px 14px;margin-top:1.25rem;font-size:13px;color:var(--accent);line-height:1.5;}
+.onboard-footer{padding:0 2rem 2rem;}
+.onboard-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;}
+.onboard-btn:hover{background:#5538e0;transform:translateY(-1px);}
+.onboard-skip{text-align:center;margin-top:10px;font-size:12px;color:var(--ink-ghost);cursor:pointer;}
+.onboard-skip:hover{color:var(--ink-soft);}
+
+@media print{.run-btn,.results-actions,.card-btns,.info-bar,.api-warning,.history-btn,.mode-tabs{display:none!important}.acc-body{display:block!important}}
 </style>
 </head>
 <body>
@@ -411,6 +431,47 @@ input[type=text]:focus,input[type=password]:focus{border-color:var(--accent);bac
   </div>
 </div>
 
+<!-- ONBOARDING -->
+<div class="onboard-overlay" id="onboardOverlay">
+  <div class="onboard-modal">
+    <div class="onboard-header">
+      <div class="onboard-header-emoji">👋</div>
+      <h2>myPersonas'a Hoş Geldin</h2>
+      <p>Ekranlarını gerçek kullanıcı gözünden test etmek artık çok kolay</p>
+    </div>
+    <div class="onboard-body">
+      <div class="onboard-step">
+        <div class="onboard-step-num">1</div>
+        <div class="onboard-step-text">
+          <div class="onboard-step-title">Personanı oluştur</div>
+          <div class="onboard-step-desc">Gerçek veya sentetik bir kullanıcı profili oluştur. İsim, meslek, ve hakkında bildiklerini yaz.</div>
+        </div>
+      </div>
+      <div class="onboard-step">
+        <div class="onboard-step-num">2</div>
+        <div class="onboard-step-text">
+          <div class="onboard-step-title">Ekranlarını yükle</div>
+          <div class="onboard-step-desc">Wireframe, mockup veya gerçek ekran görüntüsü — hangisi olursa. Birden fazla yükleyebilirsin.</div>
+        </div>
+      </div>
+      <div class="onboard-step">
+        <div class="onboard-step-num">3</div>
+        <div class="onboard-step-text">
+          <div class="onboard-step-title">Testini yap</div>
+          <div class="onboard-step-desc">AI o persona gibi düşünür, ekranını değerlendirir ve dakikalar içinde detaylı geri bildirim verir.</div>
+        </div>
+      </div>
+      <div class="onboard-tip">
+        💡 <strong>İpucu:</strong> Personanı ne kadar çok beslersen, o kadar sadık ve gerçekçi bir persona elde edersin. Hafıza sekmesini düzenli kullan!
+      </div>
+    </div>
+    <div class="onboard-footer">
+      <button class="onboard-btn" onclick="closeOnboarding()">Hadi Başlayalım →</button>
+      <div class="onboard-skip" onclick="skipOnboarding()">Atla</div>
+    </div>
+  </div>
+</div>
+
 <!-- PERSONA MODAL -->
 <div class="modal-overlay" id="personaModal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
@@ -423,7 +484,7 @@ input[type=text]:focus,input[type=password]:focus{border-color:var(--accent);bac
       <div class="si-line"><div class="si-line-fill" id="siline1"></div></div>
       <div class="si-step" onclick="goStep(2)">
         <div class="si-dot" id="sid2">2</div>
-        <div class="si-label" id="sil2">Nasıl biri?</div>
+        <div class="si-label" id="sil2">Hafıza</div>
       </div>
       <div class="si-line"><div class="si-line-fill" id="siline2"></div></div>
       <div class="si-step" onclick="goStep(3)" style="padding-right:0;">
@@ -462,37 +523,14 @@ input[type=text]:focus,input[type=password]:focus{border-color:var(--accent);bac
       </div>
     </div>
 
-    <!-- ADIM 2 -->
+    <!-- ADIM 2 — HAFIZA -->
     <div id="ms2" style="display:none;">
-      <div class="modal-field">
-        <span class="modal-label">Teknoloji seviyesi</span>
-        <div class="chip-group" id="m_techGroup">
-          <div class="chip" onclick="mSel('tech','Çok düşük',this)">😰 Çok düşük</div>
-          <div class="chip" onclick="mSel('tech','Orta',this)">🙂 Orta</div>
-          <div class="chip" onclick="mSel('tech','İyi',this)">😎 İyi</div>
-        </div>
+      <div style="background:var(--accent-soft);border-radius:var(--rs);padding:12px 14px;margin-bottom:1.25rem;font-size:13px;color:var(--accent);line-height:1.6;">
+        <strong>Personanı besle</strong> — Bu kişi hakkında ne biliyorsun? Ne kadar çok yazarsan, AI o kadar sadık ve gerçekçi bir persona oluşturur.
       </div>
       <div class="modal-field">
-        <span class="modal-label">Ana motivasyon</span>
-        <div class="chip-group" id="m_motivGroup">
-          <div class="chip" onclick="mSel('motiv','Hızlı sonuç istiyor',this)">⚡ Hız</div>
-          <div class="chip" onclick="mSel('motiv','Güven arıyor',this)">🛡️ Güven</div>
-          <div class="chip" onclick="mSel('motiv','Fiyat odaklı',this)">💰 Fiyat</div>
-          <div class="chip" onclick="mSel('motiv','Detay odaklı',this)">🔍 Detay</div>
-        </div>
-      </div>
-      <div class="modal-field">
-        <span class="modal-label">Yaş aralığı</span>
-        <div class="chip-group" id="m_yasGroup">
-          <div class="chip" onclick="mSel('yas','18-28',this)">18–28</div>
-          <div class="chip" onclick="mSel('yas','29-40',this)">29–40</div>
-          <div class="chip" onclick="mSel('yas','41-55',this)">41–55</div>
-          <div class="chip" onclick="mSel('yas','55+',this)">55+</div>
-        </div>
-      </div>
-      <div class="modal-field">
-        <span class="modal-label">Ekstra bağlam</span>
-        <textarea id="m_extra" style="min-height:55px;" placeholder="Örn: İlk kez kullanıyor, mobilde geziyor..."></textarea>
+        <span class="modal-label">Bu kişi hakkında ne biliyorsun?</span>
+        <textarea id="m_memory" style="min-height:160px;" placeholder="Örn:&#10;— Mobilde alışveriş yapıyor, bilgisayar hiç kullanmıyor&#10;— Kargo ücretini görünce sepeti terk ediyor&#10;— Güven rozetlerine çok dikkat ediyor&#10;— Acele eder, uzun metinleri okumaz&#10;— Fiyat karşılaştırması yapmayı sever&#10;— Sosyal medyadan etkilenerek alışveriş kararı veriyor"></textarea>
       </div>
       <div class="modal-actions">
         <button class="modal-cancel" onclick="goStep(1)">← Geri</button>
@@ -528,10 +566,16 @@ input[type=text]:focus,input[type=password]:focus{border-color:var(--accent);bac
 <!-- MAIN -->
 <div class="container">
   <div class="app-header">
-    <a href="index.html" style="text-decoration:none;">
-      <div class="logo"><span class="logo-text">my<span>Personas</span></span><span class="logo-tag">Beta</span></div>
-    </a>
-    <div class="subtitle" style="margin-top:6px;">Ekranlarını gerçek kullanıcı gözünden test et</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <a href="index.html" style="text-decoration:none;">
+        <div class="logo"><span class="logo-text">my<span>Personas</span></span><span class="logo-tag" data-i18n="badge">Beta</span></div>
+      </a>
+      <div style="display:flex;background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:3px;gap:2px;">
+        <button onclick="setAppLang('tr')" id="appLangTR" style="padding:4px 12px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:none;color:var(--ink-ghost);font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;">TR</button>
+        <button onclick="setAppLang('en')" id="appLangEN" style="padding:4px 12px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:none;color:var(--ink-ghost);font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;">EN</button>
+      </div>
+    </div>
+    <div class="subtitle" style="margin-top:0;" data-i18n="app_subtitle">Ekranlarını gerçek kullanıcı gözünden test et</div>
   </div>
 
   <div class="api-warning" id="apiWarning">⚠️ API key eksik. Dosyada <strong>YOUR_API_KEY_HERE</strong> yazan yeri kendi key'inle değiştir.</div>
@@ -914,7 +958,7 @@ function deletePd(){
 function resetModal(){
   Object.keys(sel).forEach(function(k){sel[k]=null;});
   document.querySelectorAll('#personaModal .chip').forEach(function(c){c.classList.remove('active');});
-  ['m_extra','m_isim','m_rol','m_yas','m_sehir','m_motivasyon','m_pain','m_hedef'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['m_memory','m_isim','m_rol','m_yas','m_sehir','m_motivasyon','m_pain','m_hedef'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';}); 
   document.getElementById('modalGen').style.display='none';
   document.getElementById('ms3preview').style.display='none';
   document.getElementById('modalSaveBtn').disabled=false;
@@ -958,10 +1002,10 @@ async function goStep(step){
 }
 
 async function generatePersona(KEY){
-  var extra=document.getElementById('m_extra').value.trim();
+  var memory=document.getElementById('m_memory').value.trim();
   var isim=document.getElementById('m_isim').value.trim();
   var rol=document.getElementById('m_rol').value.trim();
-  var prompt='Bir UX persona profili oluştur.\nBilgiler:\n'+(isim?'- İsim: '+isim+'\n':'')+(rol?'- Meslek: '+rol+'\n':'')+(sel.tip?'- Tip: '+sel.tip+'\n':'')+(sel.tech?'- Teknoloji: '+sel.tech+'\n':'')+(sel.yas?'- Yaş aralığı: '+sel.yas+'\n':'')+(sel.motiv?'- Motivasyon eğilimi: '+sel.motiv+'\n':'')+(extra?'- Ekstra: '+extra+'\n':'')+'\nSadece JSON formatında yanıt ver:\n{"isim":"...","sehir":"...","yas":XX,"rol":"...","motivasyon":"...","pain":"...","hedef":"..."}';
+  var prompt='Bir UX persona profili oluştur.\nBilgiler:\n'+(isim?'- İsim: '+isim+'\n':'')+(rol?'- Meslek: '+rol+'\n':'')+(document.getElementById('m_yas').value?'- Yaş: '+document.getElementById('m_yas').value+'\n':'')+(document.getElementById('m_sehir').value?'- Şehir: '+document.getElementById('m_sehir').value+'\n':'')+(sel.tip?'- Kullanıcı tipi: '+sel.tip+'\n':'')+(memory?'\nBu kişi hakkında bilinen notlar:\n'+memory+'\n':'')+'\nBu bilgilere dayanarak gerçekçi bir UX personası oluştur. Sadece JSON formatında yanıt ver:\n{"isim":"...","sehir":"...","yas":XX,"rol":"...","motivasyon":"...","pain":"...","hedef":"...","tech":"Çok düşük/Orta/İyi"}';
   try{
     var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:prompt}]})});
     var data=await res.json();
@@ -975,6 +1019,9 @@ async function generatePersona(KEY){
     if(json.motivasyon) document.getElementById('m_motivasyon').value=json.motivasyon;
     if(json.pain) document.getElementById('m_pain').value=json.pain;
     if(json.hedef) document.getElementById('m_hedef').value=json.hedef;
+    if(json.tech) sel.tech=json.tech;
+    // Save memory to persona chat after creation
+    if(memory) window._pendingMemory=memory;
   }catch(e){console.error('generatePersona:',e);}
 }
 
@@ -1034,6 +1081,12 @@ function savePersona(){
   } else {
     var np={id:nextId++,icon:icon,name:isim,role:rol,age:document.getElementById('m_yas').value||'',city:document.getElementById('m_sehir').value||'',tech:sel.tech||'Orta',motivation:document.getElementById('m_motivasyon').value||'',pain:document.getElementById('m_pain').value||'',goal:document.getElementById('m_hedef').value||'',iconBg:bgs[Math.floor(Math.random()*bgs.length)],badge:sel.tip||rol};
     personas.push(np);
+    // Save memory as first chat entry
+    if(window._pendingMemory){
+      var initChat=[{role:'user',content:window._pendingMemory},{role:'ai',content:'Bu notlar personanın hafızasına kaydedildi. Testlerde bu bilgiler kullanılacak.'}];
+      localStorage.setItem('pd_chat_'+np.id,JSON.stringify(initChat));
+      window._pendingMemory=null;
+    }
     if(mode==='single') singleSel=np.id; else multiSel.push(np.id);
     document.getElementById('testSection').style.display='block';
   }
@@ -1233,11 +1286,152 @@ function doClearHistory(){
   renderHistoryDrawer();updateHistoryCount();
 }
 
+// ── i18n ──
+var appT = {
+  tr: {
+    badge:'Beta', app_subtitle:'Ekranlarını gerçek kullanıcı gözünden test et',
+    api_warn:'⚠️ API key eksik. Dosyada <strong>YOUR_API_KEY_HERE</strong> yazan yeri kendi key\'inle değiştir.',
+    info_bar:'ℹ️ Şu an her kullanım öncesi API key girmeniz gerekiyor. Yakında hesap sistemiyle bu adım kalkacak.',
+    help_link:'Yardım & Destek',
+    tab_single:'Tek kullanıcıyla test', tab_multi:'Toplu test',
+    persona_label:'Persona seç', persona_label_multi:'Persona seç — birden fazla seçebilirsin',
+    select_all:'Tümünü seç', deselect_all:'Seçimi kaldır',
+    step1_title:'Test ekranlarını yükle', step2_title:'Test senaryosunu yaz',
+    upload_text:'Ekran görüntüsü veya wireframe yükle<br><strong>Tıkla veya sürükle bırak</strong> · Birden fazla seçebilirsin',
+    upload_done:'<strong>{n} ekran yüklendi</strong> · Daha fazla eklemek için tıkla',
+    upload_badge:'{n} ekran',
+    scenario_placeholder:'Aşağıdaki şablonu doldur:\n\nTest ettiğim ekran: (örn: İlan detay sayfası)\nKullanıcı bu ekranda ne yapıyor: (örn: Satıcıyla iletişime geçmeye çalışıyor)\nÖğrenmek istediğim: (örn: İletişim butonu yeterince görünür mü?)',
+    run_btn:'Testi başlat →',
+    new_persona:'Yeni persona', select_btn:'Seç', selected_btn:'✓ Seçili', detail_btn:'Detay',
+    modal_title_new:'Yeni Persona Oluştur', modal_title_edit:'Persona Düzenle',
+    step1_sub:'Adım 1 / 3 — Temel bilgiler', step2_sub:'Adım 2 / 3 — Hafıza', step3_sub:'Adım 3 / 3 — Önizle & onayla',
+    si1:'Kim?', si2:'Hafıza', si3:'Önizle',
+    field_isim:'İsim *', field_meslek:'Meslek / Rol *', field_yas:'Yaş', field_sehir:'Şehir',
+    field_tip:'Kullanıcı tipi',
+    tip1:'👤 Son kullanıcı', tip2:'💼 Profesyonel', tip3:'🎯 Yönetici',
+    memory_label:'Bu kişi hakkında ne biliyorsun?',
+    memory_info:'<strong>Personanı besle</strong> — Bu kişi hakkında ne biliyorsun? Ne kadar çok yazarsan, AI o kadar sadık ve gerçekçi bir persona oluşturur.',
+    memory_placeholder:'Örn:\n— Mobilde alışveriş yapıyor\n— Kargo ücretini görünce sepeti terk ediyor\n— Güven rozetlerine çok dikkat ediyor',
+    motiv_label:'Motivasyon', pain_label:'Acı noktaları', goal_label:'Hedef',
+    motiv_ph:'Motivasyon...', pain_ph:'Acı noktaları...', goal_ph:'Hedef...',
+    ai_generating:'AI persona oluşturuyor...',
+    cancel:'İptal', back:'← Geri', next:'Devam →', create_btn:'Personamı Oluştur', save_btn:'Değişiklikleri Kaydet', delete_btn:'🗑 Sil',
+    pd_tab1:'Kimlik', pd_tab2:'Hafıza', pd_tab3:'Geçmiş',
+    pd_save:'Değişiklikleri Kaydet', pd_saved:'✓ Kaydedildi',
+    pd_memory_info:'<strong>Persona Hafızası</strong> — Persona hakkında ne biliyorsan yaz. AI personayı besler ve günceller.',
+    pd_chat_ph:'Örn: Mobilde alışveriş yapıyor, kargo ücretinden kaçıyor...',
+    pd_send:'Gönder', pd_loading:'Yapay zeka bu bilginin persona için katkısını düşünüyor...',
+    pd_no_history:'Bu persona henüz test edilmedi.',
+    pd_test_btn:'Bu personayla test yap',
+    history_title:'Geçmiş testler', history_empty:'Henüz test yok.',
+    history_clear:'Geçmişi temizle',
+    results_pdf:'⬇ PDF indir', results_new:'← Yeni test yap',
+    tested_label:'Test edilen ekranlar',
+    silent_title:'Şşş... sessiz test var',
+    onboard_title:'myPersonas\'a Hoş Geldin',
+    onboard_sub:'Ekranlarını gerçek kullanıcı gözünden test etmek artık çok kolay',
+    onboard_s1_title:'Personanı oluştur', onboard_s1_desc:'Gerçek veya sentetik bir kullanıcı profili oluştur. İsim, meslek, ve hakkında bildiklerini yaz.',
+    onboard_s2_title:'Ekranlarını yükle', onboard_s2_desc:'Wireframe, mockup veya gerçek ekran görüntüsü — hangisi olursa. Birden fazla yükleyebilirsin.',
+    onboard_s3_title:'Testini yap', onboard_s3_desc:'AI o persona gibi düşünür, ekranını değerlendirir ve dakikalar içinde detaylı geri bildirim verir.',
+    onboard_tip:'💡 <strong>İpucu:</strong> Personanı ne kadar çok beslersen, o kadar sadık ve gerçekçi bir persona elde edersin. Hafıza sekmesini düzenli kullan!',
+    onboard_btn:'Hadi Başlayalım →', onboard_skip:'Atla',
+  },
+  en: {
+    badge:'Beta', app_subtitle:'Test your screens through real user eyes',
+    api_warn:'⚠️ API key missing. Replace <strong>YOUR_API_KEY_HERE</strong> in the file with your own key.',
+    info_bar:'ℹ️ Currently you need to enter your API key before each use. This step will be removed soon with the account system.',
+    help_link:'Help & Support',
+    tab_single:'Single user test', tab_multi:'Batch test',
+    persona_label:'Select persona', persona_label_multi:'Select personas — you can choose multiple',
+    select_all:'Select all', deselect_all:'Deselect all',
+    step1_title:'Upload test screens', step2_title:'Write test scenario',
+    upload_text:'Upload screenshot or wireframe<br><strong>Click or drag & drop</strong> · You can select multiple',
+    upload_done:'<strong>{n} screens uploaded</strong> · Click to add more',
+    upload_badge:'{n} screens',
+    scenario_placeholder:'Fill in the template below:\n\nScreen being tested: (e.g. Listing detail page)\nWhat user does on screen: (e.g. Trying to contact the seller)\nWhat I want to learn: (e.g. Is the contact button visible enough?)',
+    run_btn:'Start Test →',
+    new_persona:'New persona', select_btn:'Select', selected_btn:'✓ Selected', detail_btn:'Detail',
+    modal_title_new:'Create New Persona', modal_title_edit:'Edit Persona',
+    step1_sub:'Step 1 / 3 — Basic info', step2_sub:'Step 2 / 3 — Memory', step3_sub:'Step 3 / 3 — Preview & confirm',
+    si1:'Who?', si2:'Memory', si3:'Preview',
+    field_isim:'Name *', field_meslek:'Job / Role *', field_yas:'Age', field_sehir:'City',
+    field_tip:'User type',
+    tip1:'👤 End user', tip2:'💼 Professional', tip3:'🎯 Manager',
+    memory_label:'What do you know about this person?',
+    memory_info:'<strong>Feed your persona</strong> — The more you write, the more authentic and accurate the AI persona becomes.',
+    memory_placeholder:'E.g.:\n— Shops on mobile, never uses desktop\n— Abandons cart when they see shipping costs\n— Pays close attention to trust badges',
+    motiv_label:'Motivation', pain_label:'Pain points', goal_label:'Goal',
+    motiv_ph:'Motivation...', pain_ph:'Pain points...', goal_ph:'Goal...',
+    ai_generating:'AI is creating persona...',
+    cancel:'Cancel', back:'← Back', next:'Continue →', create_btn:'Create My Persona', save_btn:'Save Changes', delete_btn:'🗑 Delete',
+    pd_tab1:'Identity', pd_tab2:'Memory', pd_tab3:'History',
+    pd_save:'Save Changes', pd_saved:'✓ Saved',
+    pd_memory_info:'<strong>Persona Memory</strong> — Write what you know about this persona. AI feeds and updates the persona.',
+    pd_chat_ph:'E.g. Shops on mobile, avoids shipping costs...',
+    pd_send:'Send', pd_loading:'AI is thinking about how this information contributes to the persona...',
+    pd_no_history:'This persona has not been tested yet.',
+    pd_test_btn:'Test with this persona',
+    history_title:'Test history', history_empty:'No tests yet.',
+    history_clear:'Clear history',
+    results_pdf:'⬇ Download PDF', results_new:'← New test',
+    tested_label:'Tested screens',
+    silent_title:'Shhh... silent test in progress',
+    onboard_title:'Welcome to myPersonas',
+    onboard_sub:'Testing your screens through real user eyes is now easy',
+    onboard_s1_title:'Create your persona', onboard_s1_desc:'Create a real or synthetic user profile. Write the name, job, and what you know about them.',
+    onboard_s2_title:'Upload your screens', onboard_s2_desc:'Wireframe, mockup, or real screenshot — anything works. You can upload multiple.',
+    onboard_s3_title:'Run your test', onboard_s3_desc:'AI thinks like that persona, evaluates your screen, and gives detailed feedback in minutes.',
+    onboard_tip:'💡 <strong>Tip:</strong> The more you feed your persona, the more loyal and realistic it becomes. Use the Memory tab regularly!',
+    onboard_btn:'Let\'s Get Started →', onboard_skip:'Skip',
+  }
+};
+
+var appLang = localStorage.getItem('mp_lang') || 'tr';
+
+function setAppLang(lang) {
+  appLang = lang;
+  localStorage.setItem('mp_lang', lang);
+  applyAppLang();
+  document.getElementById('appLangTR').style.background = lang==='tr' ? 'var(--accent)' : 'none';
+  document.getElementById('appLangTR').style.color = lang==='tr' ? '#fff' : 'var(--ink-ghost)';
+  document.getElementById('appLangEN').style.background = lang==='en' ? 'var(--accent)' : 'none';
+  document.getElementById('appLangEN').style.color = lang==='en' ? '#fff' : 'var(--ink-ghost)';
+}
+
+function applyAppLang() {
+  var d = appT[appLang];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if(d[key] !== undefined) el.innerHTML = d[key];
+  });
+  // Update dynamic elements
+  var si1=document.getElementById('sil1'); if(si1) si1.textContent=d.si1;
+  var si2=document.getElementById('sil2'); if(si2) si2.textContent=d.si2;
+  var si3=document.getElementById('sil3'); if(si3) si3.textContent=d.si3;
+  document.getElementById('personaLabel').textContent = mode==='single' ? d.persona_label : d.persona_label_multi;
+  renderPersonas();
+}
+
+// ── Onboarding ──
+function closeOnboarding(){
+  document.getElementById('onboardOverlay').classList.remove('open');
+  localStorage.setItem('onboarded','1');
+  openAdd();
+}
+function skipOnboarding(){
+  document.getElementById('onboardOverlay').classList.remove('open');
+  localStorage.setItem('onboarded','1');
+}
+
 // ── Init ──
 var ACTIVE_KEY=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
 if(ACTIVE_KEY) document.getElementById('apiWarning').style.display='none';
+setAppLang(appLang);
 renderPersonas();
 updateHistoryCount();
+if(!localStorage.getItem('onboarded')){
+  document.getElementById('onboardOverlay').classList.add('open');
+}
 </script>
 </body>
 </html>
