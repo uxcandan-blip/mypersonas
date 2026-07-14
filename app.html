@@ -898,7 +898,7 @@ async function sendPdChat() {
   btn.textContent='...';btn.disabled=true;
   try{
     var prompt='Sen bir UX araştırmacısısın. Kullanıcı '+p.name+' adlı persona hakkında bilgi yazıyor.\n\nMevcut profil:\n- İsim: '+p.name+'\n- Meslek: '+p.role+'\n- Yaş: '+p.age+', '+p.city+'\n- Teknoloji: '+p.tech+'\n- Motivasyon: '+p.motivation+'\n- Acı noktaları: '+p.pain+'\n- Hedef: '+p.goal+'\n\nKullanıcı notu: "'+text+'"\n\nKısa, sade Türkçe yanıt ver. Eğer bu bilgiyi personanın profiline eklemek mantıklıysa, yanıtının sonuna şunu ekle:\n[GÜNCELLE:alan=değer]\nÖrn: [GÜNCELLE:motivation=Fiyata çok duyarlı]';
-    var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:250,messages:[{role:"user",content:prompt}]})});
+    var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:250,messages:[{role:"user",content:prompt}]})});
     var data=await res.json();
     if(data.error) throw new Error(data.error.message||JSON.stringify(data.error));
     if(!data.content||!data.content[0]) throw new Error(appLang==='en'?'Empty response':'Boş yanıt');
@@ -1056,7 +1056,7 @@ async function runPersonaAI(){
       var res=await fetch("https://api.anthropic.com/v1/messages",{
         method:"POST",
         headers:{"Content-Type":"application/json","x-api-key":KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,messages:[{role:"user",content:prompt}]})
+        body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:500,messages:[{role:"user",content:prompt}]})
       });
       var data=await res.json();
       if(!data.content||!data.content[0]) throw new Error('Empty response');
@@ -1319,7 +1319,7 @@ async function callAPI(persona,scenario,flowDesc){
   var ACTIVE_KEY=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
   var textPrompt='Sen deneyimli bir UX araştırmacısısın.\n\nGÖREVİN: Görseldeki ekranı analiz et ve aşağıdaki persona kimliğine bürünerek birinci şahıs ağzından gerçekçi bir kullanıcı testi yorumu yaz.\n\nPERSONA:\n- Ad: '+persona.name+'\n- Rol: '+persona.role+(persona.city?'\n- Şehir: '+persona.city:'')+'\n- Yaş: '+persona.age+'\n- Teknoloji seviyesi: '+persona.tech+'\n- Motivasyon: '+persona.motivation+'\n- Acı noktaları: '+persona.pain+'\n- Hedef: '+persona.goal+'\n\nTEST SENARYOSU:\n'+scenario+flowDesc+'\n\nYORUM FORMATI:\n1. İlk izlenim\n2. Beğendiğin 2 şey\n3. Sorun yaşadığın 2-3 şey\n'+(flowItems.length>1?'4. Akışta en çok zorlandığın adım\n':'')+  (flowItems.length>1?'5.':'4.')+' Değiştirilmesini istediğin 1 şey\n'+(flowItems.length>1?'6.':'5.')+' 10 üzerinden puan\n\nSonra tek satırda:\nRATINGS:{"genel":X,"kullanım_kolaylığı":X,"güven":X,"hız":X}';
   var userContent=flowItems.map(function(item){return{type:"image",source:{type:"base64",media_type:item.type,data:item.base64}};}).concat([{type:"text",text:textPrompt}]);
-  var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":ACTIVE_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1200,messages:[{role:"user",content:userContent}]})});
+  var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":ACTIVE_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1200,messages:[{role:"user",content:userContent}]})});
   var data=await res.json();
   if(data.error) throw new Error(data.error.message||JSON.stringify(data.error));
   if(!data.content||!Array.isArray(data.content)) throw new Error('Beklenmeyen API yanıtı: '+JSON.stringify(data).substring(0,200));
@@ -1364,7 +1364,7 @@ async function runTest(){
     try{
       var ACTIVE_KEY2=API_KEY!=="YOUR_API_KEY_HERE"?API_KEY:(localStorage.getItem('mp_api_key')||'');
       var sp=''+results.length+' persona yorumunu sentezle:\n\n'+results.filter(function(r){return!r.error;}).map(function(r){return'--- '+r.persona.name+' ---\n'+r.text;}).join('\n\n')+'\n\n1. Ortak şikayetler\n2. Özel sorunlar\n3. 2 pozitif bulgu\n4. 3 öncelikli aksiyon\n\nKısa ve net yaz.';
-      var sr=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":ACTIVE_KEY2,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:800,messages:[{role:"user",content:sp}]})});
+      var sr=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":ACTIVE_KEY2,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:800,messages:[{role:"user",content:sp}]})});
       var sd=await sr.json();
       var st=sd.content.map(function(b){return b.text||'';}).join('').trim();
       summaryHtml='<div class="summary-card"><div class="summary-header"><div style="font-size:20px;">📊</div><div class="summary-title">Genel Özet</div><div class="summary-badge">'+results.length+' persona</div></div><div class="summary-content">'+st+'</div></div>';
