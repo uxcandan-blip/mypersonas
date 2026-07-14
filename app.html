@@ -900,7 +900,8 @@ async function sendPdChat() {
     var prompt='Sen bir UX araştırmacısısın. Kullanıcı '+p.name+' adlı persona hakkında bilgi yazıyor.\n\nMevcut profil:\n- İsim: '+p.name+'\n- Meslek: '+p.role+'\n- Yaş: '+p.age+', '+p.city+'\n- Teknoloji: '+p.tech+'\n- Motivasyon: '+p.motivation+'\n- Acı noktaları: '+p.pain+'\n- Hedef: '+p.goal+'\n\nKullanıcı notu: "'+text+'"\n\nKısa, sade Türkçe yanıt ver. Eğer bu bilgiyi personanın profiline eklemek mantıklıysa, yanıtının sonuna şunu ekle:\n[GÜNCELLE:alan=değer]\nÖrn: [GÜNCELLE:motivation=Fiyata çok duyarlı]';
     var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:250,messages:[{role:"user",content:prompt}]})});
     var data=await res.json();
-    if(!data.content||!data.content[0]) throw new Error('Boş yanıt');
+    if(data.error) throw new Error(data.error.message||JSON.stringify(data.error));
+    if(!data.content||!data.content[0]) throw new Error(appLang==='en'?'Empty response':'Boş yanıt');
     var reply=data.content.map(function(b){return b.text||'';}).join('').trim();
     var upd=reply.match(/\[GÜNCELLE:(\w+)=(.+?)\]/);
     if(upd){
@@ -918,11 +919,14 @@ async function sendPdChat() {
       reply=reply.replace(/\[GÜNCELLE:[^\]]+\]/g,'').trim();
     }
     history.push({role:'ai',content:reply});
-  }catch(err){history.push({role:'ai',content:'Hata: '+err.message});}
+  }catch(err){
+    var errMsg = err.message || String(err);
+    history.push({role:'ai',content:(appLang==='en'?'Error: ':'Hata: ')+errMsg});
+  }
   document.getElementById('pd-chat-loading').style.display='none';
   localStorage.setItem('pd_chat_'+pdCurrentId,JSON.stringify(history.slice(-20)));
   renderPdChat(history);
-  btn.textContent='Gönder';btn.disabled=false;
+  btn.textContent=t('pd_send');btn.disabled=false;
 }
 
 function renderPdHistory(pid) {
