@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>myPersonas — Kullanıcılarını Tanı, Ürünü İyileştir</title>
+<title>myPersonas — Know Your Users, Improve Your Product</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,17 +15,18 @@
 }
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
 
-/* NAV */
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
 .nav-logo { font-size: 20px; font-weight: 800; color: var(--ink); letter-spacing: -0.03em; text-decoration: none; }
 .nav-logo span { color: var(--accent); }
-.nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+.nav-links { display: flex; align-items: center; gap: 1.75rem; list-style: none; }
 .nav-links a { font-size: 14px; font-weight: 500; color: var(--ink-soft); text-decoration: none; transition: color 0.15s; }
 .nav-links a:hover { color: var(--ink); }
 .nav-cta { background: var(--ink) !important; color: #fff !important; padding: 8px 20px; border-radius: 20px; font-weight: 600 !important; font-size: 13px !important; cursor: pointer; }
 .nav-cta:hover { background: #2a2a2a !important; }
+.lang-toggle { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 3px; gap: 2px; }
+.lang-btn { padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; background: none; color: var(--ink-ghost); font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; }
+.lang-btn.active { background: var(--accent); color: #fff; }
 
-/* HERO */
 .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 80px 2rem 2rem; }
 .bg-canvas { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .bg-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: orbFloat ease-in-out infinite; }
@@ -45,11 +46,11 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 2rem;
 .hero-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; animation: fadeUp 0.6s ease 0.3s both; }
 .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: #fff; font-size: 15px; font-weight: 700; padding: 14px 28px; border-radius: 14px; text-decoration: none; transition: all 0.18s ease; border: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
 .btn-primary:hover { background: #2a2a2a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
-.btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--ink-soft); font-size: 15px; font-weight: 500; padding: 14px 24px; border-radius: 14px; text-decoration: none; border: 1.5px solid var(--border); transition: all 0.18s ease; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
+.btn-secondary { display: inline-flex; align-items: center; background: transparent; color: var(--ink-soft); font-size: 15px; font-weight: 500; padding: 14px 24px; border-radius: 14px; text-decoration: none; border: 1.5px solid var(--border); transition: all 0.18s ease; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
 .btn-secondary:hover { border-color: var(--ink); color: var(--ink); }
 .hero-note { margin-top: 1rem; font-size: 12px; color: var(--ink-ghost); animation: fadeUp 0.6s ease 0.4s both; }
 .floating-cards { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
-.float-card { position: absolute; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 13px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 10px; animation: floatCard ease-in-out infinite; opacity: 0.8; }
+.float-card { position: absolute; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 13px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 10px; animation: floatCard ease-in-out infinite; opacity: 0.85; }
 .float-card-icon { font-size: 22px; }
 .float-card-name { font-weight: 700; font-size: 13px; }
 .float-card-role { font-size: 11px; color: var(--ink-ghost); }
@@ -61,7 +62,6 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 2rem;
 @keyframes floatCard { 0%,100%{transform:translateY(0px) rotate(-1deg)} 50%{transform:translateY(-10px) rotate(1deg)} }
 @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-/* SECTIONS */
 section { padding: 6rem 2rem; }
 .section-inner { max-width: 900px; margin: 0 auto; }
 .section-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 12px; }
@@ -75,7 +75,6 @@ section { padding: 6rem 2rem; }
 .step-card-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.6; font-weight: 300; }
 .step-emoji { font-size: 28px; margin-bottom: 1rem; display: block; }
 
-/* PLANS */
 #plans { background: var(--surface-2); }
 .plans-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 20px; }
 .plan-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; padding: 2rem; transition: all 0.2s ease; }
@@ -97,9 +96,7 @@ section { padding: 6rem 2rem; }
 .plan-btn { width: 100%; padding: 13px; border-radius: 12px; font-size: 14px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; border: 1.5px solid var(--border); background: var(--surface); color: var(--ink); text-decoration: none; display: block; text-align: center; }
 .plan-btn:hover { border-color: var(--ink); }
 .plan-btn.featured-btn { background: #fff; color: var(--ink); border-color: #fff; }
-.plan-btn.featured-btn:hover { background: #f0f0f0; }
 
-/* CONTACT */
 .contact-wrap { background: var(--ink); border-radius: 24px; padding: 3rem; text-align: center; color: #fff; }
 .contact-wrap .section-title { color: #fff; }
 .contact-wrap .section-sub { color: rgba(255,255,255,0.6); margin: 0 auto 2rem; }
@@ -109,20 +106,10 @@ footer { padding: 2rem; text-align: center; font-size: 13px; color: var(--ink-gh
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-@media (max-width: 768px) {
-  .float-card-1,.float-card-2,.float-card-3,.float-card-4 { display: none; }
-  nav { padding: 0 1rem; }
-  .nav-links { display: none; }
-  section { padding: 4rem 1.25rem; }
-  .contact-wrap { padding: 2rem 1.25rem; }
-}
-
-/* MODALS */
+/* Modals */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 300; display: none; align-items: center; justify-content: center; padding: 1rem; }
 .overlay.open { display: flex; }
 @keyframes modalPop { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
-
-/* Payment modal */
 .pay-modal { background: #fff; border-radius: 24px; padding: 2.5rem; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,0.2); animation: modalPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both; position: relative; }
 .pay-modal-logo { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 6px; }
 .pay-modal-logo span { color: var(--accent); }
@@ -132,45 +119,44 @@ footer { padding: 2rem; text-align: center; font-size: 13px; color: var(--ink-gh
 .pay-price-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 1.5rem; }
 .pay-price-btn { padding: 8px 18px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; background: #fff; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; color: var(--ink-soft); }
 .pay-price-btn.selected { border-color: #f97316; background: #fff7ed; color: #c2410c; }
-.pay-btn { width: 100%; padding: 14px; background: #f97316; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; letter-spacing: -0.01em; }
-.pay-btn:hover { background: #ea6c0a; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.3); }
+.pay-btn { width: 100%; padding: 14px; background: #f97316; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
+.pay-btn:hover { background: #ea6c0a; transform: translateY(-1px); }
+.pay-skip { width: 100%; padding: 11px; background: none; border: 1.5px solid var(--border); border-radius: 14px; font-size: 14px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; color: var(--ink-soft); margin-top: 10px; transition: all 0.15s; }
+.pay-skip:hover { border-color: #888; color: var(--ink); }
 .pay-note { font-size: 11px; color: var(--ink-ghost); margin-top: 12px; }
 .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: none; cursor: pointer; font-size: 16px; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
-.modal-close:hover { background: var(--border); }
-
-/* API key modal */
 .apikey-modal { background: #fff; border-radius: 24px; padding: 2.5rem; width: 100%; max-width: 440px; box-shadow: 0 24px 64px rgba(0,0,0,0.2); animation: modalPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both; position: relative; }
 .apikey-modal h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
 .apikey-modal p { font-size: 14px; color: var(--ink-soft); font-weight: 300; line-height: 1.6; margin-bottom: 1.5rem; }
 .apikey-input { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color 0.15s; color: var(--ink); margin-bottom: 1rem; }
 .apikey-input:focus { border-color: var(--accent); }
-.apikey-input::placeholder { color: var(--ink-ghost); }
-.apikey-help { font-size: 12px; color: var(--ink-ghost); margin-bottom: 1.5rem; line-height: 1.5; }
+.apikey-help { font-size: 12px; color: var(--ink-ghost); margin-bottom: 1rem; line-height: 1.5; }
 .apikey-help a { color: var(--accent); text-decoration: none; }
-.apikey-help a:hover { text-decoration: underline; }
-.apikey-btn { width: 100%; padding: 14px; background: var(--ink); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; letter-spacing: -0.01em; }
+.apikey-warning { font-size: 12px; color: #3b6cb7; background: #f0f7ff; border: 1px solid #c7dffe; border-radius: 8px; padding: 10px 12px; margin-bottom: 1.25rem; line-height: 1.5; }
+.apikey-btn { width: 100%; padding: 14px; background: var(--ink); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
 .apikey-btn:hover { background: #2a2a2a; transform: translateY(-1px); }
 .success-tick { width: 56px; height: 56px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 1.25rem; }
+
+@media (max-width: 768px) {
+  .float-card-1,.float-card-2,.float-card-3,.float-card-4 { display: none; }
+  nav { padding: 0 1rem; }
+  .nav-links li:not(:last-child):not(:nth-last-child(2)) { display: none; }
+  section { padding: 4rem 1.25rem; }
+  .contact-wrap { padding: 2rem 1.25rem; }
+}
 </style>
 </head>
 <body>
 
-<!-- PAYMENT MODAL -->
+<!-- WELCOME MODAL -->
 <div class="overlay" id="payOverlay">
   <div class="pay-modal">
     <button class="modal-close" onclick="document.getElementById('payOverlay').classList.remove('open')">✕</button>
-    <div class="pay-modal-logo">my<span>Personas</span></div>
-    <div class="pay-avatar">☕</div>
-    <h2>Bir kahve ısmarla</h2>
-    <p>myPersonas tamamen ücretsiz. Ama bir kahve ısmarlayarak geliştirmeye destek olabilirsin.</p>
-    <div class="pay-price-row">
-      <button class="pay-price-btn selected" onclick="selectPrice(this)">☕ $5</button>
-      <button class="pay-price-btn" onclick="selectPrice(this)">☕☕ $10</button>
-      <button class="pay-price-btn" onclick="selectPrice(this)">☕☕☕ $15</button>
-    </div>
-    <button class="pay-btn" onclick="onPayClick()">Kahve Ismarla & Devam Et ☕</button>
-    <button style="width:100%;padding:11px;background:none;border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;color:var(--ink-soft);margin-top:10px;transition:all 0.15s;" onmouseover="this.style.borderColor='#888'" onmouseout="this.style.borderColor='var(--border)'" onclick="onPayClick()">Şimdilik atla, devam et →</button>
-    <p class="pay-note">Ödeme sonrası API key'ini girerek hemen kullanmaya başlayabilirsin.</p>
+    <div class="pay-avatar" style="font-size:42px;background:#f0fdf4;border-color:#bbf7d0;">🎁</div>
+    <h2 data-i18n="pay_title">Tamamen ücretsiz!</h2>
+    <p data-i18n="pay_desc">Para istemiyoruz. İşinize yararsa hayır duanızı alırız — bu bizim için yeter. 🙏</p>
+    <button class="pay-btn" onclick="onPayClick()" data-i18n="pay_btn" style="background:var(--accent);">Kullanmaya Başla →</button>
+    <p class="pay-note" data-i18n="pay_note">API key'inle çalışır · Hiçbir veri saklanmaz</p>
   </div>
 </div>
 
@@ -179,12 +165,12 @@ footer { padding: 2rem; text-align: center; font-size: 13px; color: var(--ink-gh
   <div class="apikey-modal">
     <button class="modal-close" onclick="document.getElementById('apikeyOverlay').classList.remove('open')">✕</button>
     <div class="success-tick">🎉</div>
-    <h2>Teşekkürler!</h2>
-    <p>Şimdi Anthropic API key'ini gir ve kullanmaya başla. Key'in sadece tarayıcında çalışır, hiçbir sunucuya gönderilmez.</p>
-    <input type="password" class="apikey-input" id="landingApiKey" placeholder="sk-ant-api03-...">
-    <p class="apikey-help">API key'in yoksa <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>'dan ücretsiz alabilirsin. Aylık $5 kredi yeterli.</p>
-    <p style="font-size:12px;color:#6b6b6b;background:#f0f7ff;border:1px solid #c7dffe;border-radius:8px;padding:10px 12px;margin-bottom:1.25rem;line-height:1.5;">ℹ️ Şu an her kullanım öncesi API key'inizi girmeniz gerekiyor. Yakında hesap sistemiyle bu adım kalkacak.</p>
-    <button class="apikey-btn" onclick="goToApp()">Kullanmaya Başla →</button>
+    <h2 data-i18n="apikey_title">Teşekkürler!</h2>
+    <p data-i18n="apikey_desc">Şimdi Anthropic API key'ini gir ve kullanmaya başla. Key'in sadece tarayıcında çalışır, hiçbir sunucuya gönderilmez.</p>
+    <input type="password" class="apikey-input" id="landingApiKey" data-i18n-placeholder="apikey_placeholder" placeholder="sk-ant-api03-...">
+    <p class="apikey-help" data-i18n="apikey_help">API key'in yoksa <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>'dan ücretsiz alabilirsin. Aylık $5 kredi yeterli.</p>
+    <div class="apikey-warning" data-i18n="apikey_warning">ℹ️ Şu an her kullanım öncesi API key'inizi girmeniz gerekiyor. Yakında hesap sistemiyle bu adım kalkacak.</div>
+    <button class="apikey-btn" onclick="goToApp()" data-i18n="apikey_btn">Kullanmaya Başla →</button>
   </div>
 </div>
 
@@ -192,11 +178,17 @@ footer { padding: 2rem; text-align: center; font-size: 13px; color: var(--ink-gh
 <nav>
   <a href="#" class="nav-logo">my<span>Personas</span></a>
   <ul class="nav-links">
-    <li><a href="#how-it-works">Nasıl çalışır</a></li>
-    <li><a href="sss.html">S.S.S.</a></li>
-    <li><a href="#plans">Planlar</a></li>
-    <li><a href="#contact">İletişim</a></li>
-    <li><a onclick="openPayModal()" class="nav-cta" style="cursor:pointer;">Ücretsiz Dene</a></li>
+    <li><a href="#how-it-works" data-i18n="nav_how">Nasıl çalışır</a></li>
+    <li><a href="sss.html" data-i18n="nav_faq">S.S.S.</a></li>
+    <li><a href="#plans" data-i18n="nav_plans">Planlar</a></li>
+    <li><a href="#contact" data-i18n="nav_contact">İletişim</a></li>
+    <li>
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('tr')">TR</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+    </li>
+    <li><a onclick="openPayModal()" class="nav-cta" style="cursor:pointer;" data-i18n="nav_cta">Ücretsiz Dene</a></li>
   </ul>
 </nav>
 
@@ -209,48 +201,45 @@ footer { padding: 2rem; text-align: center; font-size: 13px; color: var(--ink-gh
     <div class="bg-orb bg-orb-3"></div>
   </div>
   <div class="floating-cards">
-    <div class="float-card float-card-1"><div class="float-card-icon">👩‍💼</div><div><div class="float-card-name" id="fc1name">Sara Mitchell</div><div class="float-card-role" id="fc1role">E-ticaret yöneticisi</div></div><div class="float-card-score" id="fc1stars">★★★★☆</div></div>
-    <div class="float-card float-card-2"><div class="float-card-icon">👴</div><div><div class="float-card-name" id="fc2name">Hasan Çevik</div><div class="float-card-role" id="fc2role">Banka müşterisi</div></div><div class="float-card-score" id="fc2stars">★★☆☆☆</div></div>
-    <div class="float-card float-card-3"><div class="float-card-icon">🧑‍💻</div><div><div class="float-card-name" id="fc3name">Alex Turner</div><div class="float-card-role" id="fc3role">SaaS kullanıcısı</div></div><div class="float-card-score" id="fc3stars">★★★★★</div></div>
-    <div class="float-card float-card-4"><div class="float-card-icon">👩</div><div><div class="float-card-name" id="fc4name">Zeynep Arslan</div><div class="float-card-role" id="fc4role">Sağlık app kullanıcısı</div></div><div class="float-card-score" id="fc4stars">★★★☆☆</div></div>
+    <div class="float-card float-card-1"><div class="float-card-icon">👩‍💼</div><div><div class="float-card-name" id="fc1name">Sara Mitchell</div><div class="float-card-role" id="fc1role">E-commerce manager</div></div><div class="float-card-score">★★★★☆</div></div>
+    <div class="float-card float-card-2"><div class="float-card-icon">👴</div><div><div class="float-card-name" id="fc2name">Hasan Çevik</div><div class="float-card-role" id="fc2role">Bank customer</div></div><div class="float-card-score">★★☆☆☆</div></div>
+    <div class="float-card float-card-3"><div class="float-card-icon">🧑‍💻</div><div><div class="float-card-name" id="fc3name">Alex Turner</div><div class="float-card-role" id="fc3role">SaaS user</div></div><div class="float-card-score">★★★★★</div></div>
+    <div class="float-card float-card-4"><div class="float-card-icon">👩</div><div><div class="float-card-name" id="fc4name">Zeynep Arslan</div><div class="float-card-role" id="fc4role">Health app user</div></div><div class="float-card-score">★★★☆☆</div></div>
   </div>
   <div class="hero-inner">
-    <div class="hero-badge">✦ AI destekli UX araştırması</div>
+    <div class="hero-badge" data-i18n="hero_badge">✦ AI destekli UX araştırması</div>
     <h1 class="hero-title">
-      Personaların artık<br>
+      <span data-i18n="hero_title_pre">Personaların artık</span><br>
       <span class="rotating-wrap">
-        <span class="rotating-text">
-          <span>yanı başında.</span>
-          <span>seninle test ediyor.</span>
-          <span>gerçek gibi konuşuyor.</span>
-          <span>tasarımını değerlendiriyor.</span>
-          <span>yanı başında.</span>
+        <span class="rotating-text" id="rotatingText">
+          <span data-i18n="rot1">yanı başında.</span>
+          <span data-i18n="rot2">seninle test ediyor.</span>
+          <span data-i18n="rot3">gerçek gibi konuşuyor.</span>
+          <span data-i18n="rot4">tasarımını değerlendiriyor.</span>
+          <span data-i18n="rot1b">yanı başında.</span>
         </span>
       </span>
     </h1>
-    <p class="hero-sub">Ekranlarını gerçek kullanıcı gözünden test et. AI destekli sanal kullanıcılar, dakikalar içinde gerçekçi UX geri bildirimi verir.</p>
+    <p class="hero-sub" data-i18n="hero_sub">Ekranlarını gerçek kullanıcı gözünden test et. AI destekli sanal kullanıcılar, dakikalar içinde gerçekçi UX geri bildirimi verir.</p>
     <div class="hero-actions">
-      <button class="btn-primary" onclick="openPayModal()">
-        Ücretsiz Dene
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-      <a href="#how-it-works" class="btn-secondary">Nasıl çalışır?</a>
+      <button class="btn-primary" onclick="openPayModal()" data-i18n="hero_cta">Ücretsiz Dene</button>
+      <a href="#how-it-works" class="btn-secondary" data-i18n="hero_how">Nasıl çalışır?</a>
     </div>
-    <p class="hero-note">Kendi API key'inle çalışır · Hiçbir veri saklanmaz</p>
+    <p class="hero-note" data-i18n="hero_note">Kendi API key'inle çalışır · Hiçbir veri saklanmaz</p>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
 <section id="how-it-works">
   <div class="section-inner">
-    <p class="section-tag reveal">Nasıl çalışır</p>
-    <h2 class="section-title reveal">3 adımda kullanıcı testi</h2>
-    <p class="section-sub reveal">Gerçek bir kullanıcı araştırması için haftalar harcamak zorunda değilsin.</p>
+    <p class="section-tag reveal" data-i18n="how_tag">Nasıl çalışır</p>
+    <h2 class="section-title reveal" data-i18n="how_title">3 adımda kullanıcı testi</h2>
+    <p class="section-sub reveal" data-i18n="how_sub">Gerçek bir kullanıcı araştırması için haftalar harcamak zorunda değilsin.</p>
     <div class="steps-grid">
-      <div class="step-card reveal"><span class="step-emoji">🎭</span><div class="step-num">1</div><div class="step-card-title">Personanı seç</div><div class="step-card-desc">Hazır personalardan birini seç ya da kendi kullanıcı profilini oluştur. Her persona gerçek bir kullanıcı gibi davranır.</div></div>
-      <div class="step-card reveal"><span class="step-emoji">🖼️</span><div class="step-num">2</div><div class="step-card-title">Ekranını yükle</div><div class="step-card-desc">Wireframe, mockup veya gerçek ekran görüntüsü. Tek ekran ya da akış halinde birden fazla ekran yükle.</div></div>
-      <div class="step-card reveal"><span class="step-emoji">🤫</span><div class="step-num">3</div><div class="step-card-title">Sessiz test başlar</div><div class="step-card-desc">AI persona olarak düşünür, tepkilerini analiz eder, sorunları tespit eder. Dakikalar içinde detaylı rapor alırsın.</div></div>
-      <div class="step-card reveal"><span class="step-emoji">📊</span><div class="step-num">4</div><div class="step-card-title">Aksiyona geç</div><div class="step-card-desc">Toplu testte tüm personaların ortak sorunları ve öncelikli aksiyonlar otomatik özetlenir.</div></div>
+      <div class="step-card reveal"><span class="step-emoji">🎭</span><div class="step-num">1</div><div class="step-card-title" data-i18n="step1_title">Personanı seç</div><div class="step-card-desc" data-i18n="step1_desc">Hazır personalardan birini seç ya da kendi kullanıcı profilini oluştur. Her persona gerçek bir kullanıcı gibi davranır.</div></div>
+      <div class="step-card reveal"><span class="step-emoji">🖼️</span><div class="step-num">2</div><div class="step-card-title" data-i18n="step2_title">Ekranını yükle</div><div class="step-card-desc" data-i18n="step2_desc">Wireframe, mockup veya gerçek ekran görüntüsü. Tek ekran ya da akış halinde birden fazla ekran yükle.</div></div>
+      <div class="step-card reveal"><span class="step-emoji">🤫</span><div class="step-num">3</div><div class="step-card-title" data-i18n="step3_title">Sessiz test başlar</div><div class="step-card-desc" data-i18n="step3_desc">AI persona olarak düşünür, tepkilerini analiz eder, sorunları tespit eder. Dakikalar içinde detaylı rapor alırsın.</div></div>
+      <div class="step-card reveal"><span class="step-emoji">📊</span><div class="step-num">4</div><div class="step-card-title" data-i18n="step4_title">Aksiyona geç</div><div class="step-card-desc" data-i18n="step4_desc">Toplu testte tüm personaların ortak sorunları ve öncelikli aksiyonlar otomatik özetlenir.</div></div>
     </div>
   </div>
 </section>
@@ -258,37 +247,37 @@ footer { padding: 2rem; text-align: center; font-size: 13px; color: var(--ink-gh
 <!-- PLANS -->
 <section id="plans">
   <div class="section-inner">
-    <p class="section-tag reveal">Planlar</p>
-    <h2 class="section-title reveal">Sana uygun planı seç</h2>
-    <p class="section-sub reveal">Şimdilik basit tut, ihtiyaç büyüdükçe birlikte büyüyelim.</p>
+    <p class="section-tag reveal" data-i18n="plans_tag">Planlar</p>
+    <h2 class="section-title reveal" data-i18n="plans_title">Sana uygun planı seç</h2>
+    <p class="section-sub reveal" data-i18n="plans_sub">Şimdilik basit tut, ihtiyaç büyüdükçe birlikte büyüyelim.</p>
     <div class="plans-grid">
       <div class="plan-card reveal">
-        <div class="plan-badge">Basic</div>
-        <div class="plan-name">Temel Plan</div>
-        <div class="plan-price">Ücretsiz <span>/ kahve ısmarlayabilirsin ☕</span></div>
-        <div class="plan-desc">Kendi API key'inle çalışır. Tüm temel özelliklere erişim, sınırsız test.</div>
+        <div class="plan-badge" data-i18n="plan1_badge">Basic</div>
+        <div class="plan-name" data-i18n="plan1_name">Temel Plan</div>
+        <div class="plan-price" data-i18n="plan1_price">Ücretsiz <span data-i18n="plan1_price_sub">/ kahve ısmarlayabilirsin ☕</span></div>
+        <div class="plan-desc" data-i18n="plan1_desc">Kendi API key'inle çalışır. Tüm temel özelliklere erişim, sınırsız test.</div>
         <ul class="plan-features">
-          <li>Tüm hazır personalar</li>
-          <li>Tek & toplu test modu</li>
-          <li>Çoklu görsel yükleme</li>
-          <li>Geçmiş testler</li>
-          <li>PDF rapor indirme</li>
+          <li data-i18n="plan1_f1">Tüm hazır personalar</li>
+          <li data-i18n="plan1_f2">Tek & toplu test modu</li>
+          <li data-i18n="plan1_f3">Çoklu görsel yükleme</li>
+          <li data-i18n="plan1_f4">Geçmiş testler</li>
+          <li data-i18n="plan1_f5">PDF rapor indirme</li>
         </ul>
-        <button class="plan-btn" onclick="openPayModal()">Başla — Ücretsiz</button>
+        <button class="plan-btn" onclick="openPayModal()" data-i18n="plan1_btn">Başla — Ücretsiz</button>
       </div>
       <div class="plan-card featured reveal">
-        <div class="plan-badge">Enterprise</div>
-        <div class="plan-name">Kurumsal Plan</div>
-        <div class="plan-price">Teklif al <span>/ projeye özel</span></div>
-        <div class="plan-desc">UX uzmanı gözüyle firmanıza özel persona deneyimi. Sıfırdan birlikte inşa ederiz.</div>
+        <div class="plan-badge" data-i18n="plan2_badge">Enterprise</div>
+        <div class="plan-name" data-i18n="plan2_name">Kurumsal Plan</div>
+        <div class="plan-price" data-i18n="plan2_price">Teklif al <span data-i18n="plan2_price_sub">/ projeye özel</span></div>
+        <div class="plan-desc" data-i18n="plan2_desc">UX uzmanı gözüyle firmanıza özel persona deneyimi. Sıfırdan birlikte inşa ederiz.</div>
         <ul class="plan-features">
-          <li>Firmaya özel personalar</li>
-          <li>Sınırsız persona & detay</li>
-          <li>Sektöre özel prompt eğitimi</li>
-          <li>Birebir UX danışmanlığı</li>
-          <li>Öncelikli destek</li>
+          <li data-i18n="plan2_f1">Firmaya özel personalar</li>
+          <li data-i18n="plan2_f2">Sınırsız persona & detay</li>
+          <li data-i18n="plan2_f3">Sektöre özel prompt eğitimi</li>
+          <li data-i18n="plan2_f4">Birebir UX danışmanlığı</li>
+          <li data-i18n="plan2_f5">Öncelikli destek</li>
         </ul>
-        <a href="#contact" class="plan-btn featured-btn">Teklif İste</a>
+        <a href="#contact" class="plan-btn featured-btn" data-i18n="plan2_btn">Teklif İste</a>
       </div>
     </div>
   </div>
@@ -298,91 +287,168 @@ footer { padding: 2rem; text-align: center; font-size: 13px; color: var(--ink-gh
 <section id="contact">
   <div class="section-inner">
     <div class="contact-wrap reveal">
-      <p class="section-tag" style="color:rgba(255,255,255,0.5)">İletişim</p>
-      <h2 class="section-title">Birlikte konuşalım</h2>
-      <p class="section-sub">Enterprise plan veya özel bir ihtiyacın mı var? Yazın, konuşalım.</p>
-      <a href="/cdn-cgi/l/email-protection#fd90988f959c9f9cbd90848d988f8e92939c8ed39e9290" class="contact-email">✉️ <span class="__cf_email__" data-cfemail="0d60687f656c6f6c4d60747d687f7e62636c7e236e6260">[email&#160;protected]</span></a>
+      <p class="section-tag" style="color:rgba(255,255,255,0.5)" data-i18n="contact_tag">İletişim</p>
+      <h2 class="section-title" data-i18n="contact_title">Birlikte konuşalım</h2>
+      <p class="section-sub" data-i18n="contact_sub">Enterprise plan veya özel bir ihtiyacın mı var? Yazın, konuşalım.</p>
+      <a href="mailto:merhaba@mypersonas.com" class="contact-email">✉️ merhaba@mypersonas.com</a>
     </div>
   </div>
 </section>
 
-<footer><p>© 2025 myPersonas · Tüm hakları saklıdır</p></footer>
+<footer><p data-i18n="footer">© 2025 myPersonas · Tüm hakları saklıdır</p></footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-function openPayModal() {
-  document.getElementById('payOverlay').classList.add('open');
+<script>
+// ── Translations ──
+var t = {
+  tr: {
+    nav_how:'Nasıl çalışır', nav_faq:'S.S.S.', nav_plans:'Planlar', nav_contact:'İletişim', nav_cta:'Ücretsiz Dene',
+    hero_badge:'✦ AI destekli UX araştırması',
+    hero_title_pre:'Personaların artık',
+    rot1:'yanı başında.', rot2:'seninle test ediyor.', rot3:'gerçek gibi konuşuyor.', rot4:'tasarımını değerlendiriyor.', rot1b:'yanı başında.',
+    hero_sub:'Ekranlarını gerçek kullanıcı gözünden test et. AI destekli sanal kullanıcılar, dakikalar içinde gerçekçi UX geri bildirimi verir.',
+    hero_cta:'Ücretsiz Dene', hero_how:'Nasıl çalışır?',
+    hero_note:'Kendi API key\'inle çalışır · Hiçbir veri saklanmaz',
+    how_tag:'Nasıl çalışır', how_title:'3 adımda kullanıcı testi',
+    how_sub:'Gerçek bir kullanıcı araştırması için haftalar harcamak zorunda değilsin.',
+    step1_title:'Personanı seç', step1_desc:'Hazır personalardan birini seç ya da kendi kullanıcı profilini oluştur. Her persona gerçek bir kullanıcı gibi davranır.',
+    step2_title:'Ekranını yükle', step2_desc:'Wireframe, mockup veya gerçek ekran görüntüsü. Tek ekran ya da akış halinde birden fazla ekran yükle.',
+    step3_title:'Sessiz test başlar', step3_desc:'AI persona olarak düşünür, tepkilerini analiz eder, sorunları tespit eder. Dakikalar içinde detaylı rapor alırsın.',
+    step4_title:'Aksiyona geç', step4_desc:'Toplu testte tüm personaların ortak sorunları ve öncelikli aksiyonlar otomatik özetlenir.',
+    plans_tag:'Planlar', plans_title:'Sana uygun planı seç', plans_sub:'Şimdilik basit tut, ihtiyaç büyüdükçe birlikte büyüyelim.',
+    plan1_badge:'Basic', plan1_name:'Temel Plan', plan1_price:'Ücretsiz', plan1_price_sub:'/ kahve ısmarlayabilirsin ☕',
+    plan1_desc:'Kendi API key\'inle çalışır. Tüm temel özelliklere erişim, sınırsız test.',
+    plan1_f1:'Tüm hazır personalar', plan1_f2:'Tek & toplu test modu', plan1_f3:'Çoklu görsel yükleme', plan1_f4:'Geçmiş testler', plan1_f5:'PDF rapor indirme',
+    plan1_btn:'Başla — Ücretsiz',
+    plan2_badge:'Enterprise', plan2_name:'Kurumsal Plan', plan2_price:'Teklif al', plan2_price_sub:'/ projeye özel',
+    plan2_desc:'UX uzmanı gözüyle firmanıza özel persona deneyimi. Sıfırdan birlikte inşa ederiz.',
+    plan2_f1:'Firmaya özel personalar', plan2_f2:'Sınırsız persona & detay', plan2_f3:'Sektöre özel prompt eğitimi', plan2_f4:'Birebir UX danışmanlığı', plan2_f5:'Öncelikli destek',
+    plan2_btn:'Teklif İste',
+    contact_tag:'İletişim', contact_title:'Birlikte konuşalım', contact_sub:'Enterprise plan veya özel bir ihtiyacın mı var? Yazın, konuşalım.',
+    footer:'© 2025 myPersonas · Tüm hakları saklıdır',
+    pay_title:'Tamamen ücretsiz!', pay_desc:'Para istemiyoruz. İşinize yararsa hayır duanızı alırız — bu bizim için yeter. 🙏',
+    pay_btn:'Kullanmaya Başla →', pay_skip:'', pay_note:'API key\'inle çalışır · Hiçbir veri saklanmaz',
+    apikey_title:'Teşekkürler!', apikey_desc:'Şimdi Anthropic API key\'ini gir ve kullanmaya başla. Key\'in sadece tarayıcında çalışır.',
+    apikey_placeholder:'sk-ant-api03-...', apikey_help:'API key\'in yoksa <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>\'dan ücretsiz alabilirsin. Aylık $5 kredi yeterli.',
+    apikey_warning:'ℹ️ Şu an her kullanım öncesi API key\'inizi girmeniz gerekiyor. Yakında hesap sistemiyle bu adım kalkacak.',
+    apikey_btn:'Kullanmaya Başla →',
+  },
+  en: {
+    nav_how:'How it works', nav_faq:'FAQ', nav_plans:'Plans', nav_contact:'Contact', nav_cta:'Try Free',
+    hero_badge:'✦ AI-powered UX research',
+    hero_title_pre:'Your personas are now',
+    rot1:'right beside you.', rot2:'testing with you.', rot3:'talking like real users.', rot4:'evaluating your design.', rot1b:'right beside you.',
+    hero_sub:'Test your screens through real user eyes. AI-powered virtual users give you realistic UX feedback in minutes.',
+    hero_cta:'Try for Free', hero_how:'How it works?',
+    hero_note:'Works with your own API key · No data stored',
+    how_tag:'How it works', how_title:'User testing in 3 steps',
+    how_sub:'You don\'t need to spend weeks on real user research.',
+    step1_title:'Pick your persona', step1_desc:'Choose from ready-made personas or create your own user profile. Each persona behaves like a real user.',
+    step2_title:'Upload your screen', step2_desc:'Wireframe, mockup, or real screenshot. Upload a single screen or a full flow.',
+    step3_title:'Silent test begins', step3_desc:'AI thinks as the persona, analyzes reactions, identifies problems. Detailed report in minutes.',
+    step4_title:'Take action', step4_desc:'In batch testing, common issues across all personas and priority actions are automatically summarized.',
+    plans_tag:'Plans', plans_title:'Choose your plan', plans_sub:'Keep it simple for now, grow together as needs expand.',
+    plan1_badge:'Basic', plan1_name:'Basic Plan', plan1_price:'Free', plan1_price_sub:'/ buy me a coffee ☕',
+    plan1_desc:'Works with your own API key. Access to all core features, unlimited tests.',
+    plan1_f1:'All ready-made personas', plan1_f2:'Single & batch test mode', plan1_f3:'Multiple image upload', plan1_f4:'Test history', plan1_f5:'PDF report download',
+    plan1_btn:'Start — Free',
+    plan2_badge:'Enterprise', plan2_name:'Enterprise Plan', plan2_price:'Get a quote', plan2_price_sub:'/ project-based',
+    plan2_desc:'Custom persona experience for your company with UX expert eyes. We build from scratch together.',
+    plan2_f1:'Company-specific personas', plan2_f2:'Unlimited personas & detail', plan2_f3:'Sector-specific prompt training', plan2_f4:'1-on-1 UX consulting', plan2_f5:'Priority support',
+    plan2_btn:'Get a Quote',
+    contact_tag:'Contact', contact_title:'Let\'s talk', contact_sub:'Enterprise plan or a custom need? Write us, let\'s chat.',
+    footer:'© 2025 myPersonas · All rights reserved',
+    pay_title:'Completely free!', pay_desc:'No payment needed. If it helps you, a kind thought is all we ask. 🙏',
+    pay_btn:'Start Using →', pay_skip:'', pay_note:'Works with your API key · No data stored',
+    apikey_title:'Thank you!', apikey_desc:'Now enter your Anthropic API key to get started. Your key only runs in your browser, never sent to any server.',
+    apikey_placeholder:'sk-ant-api03-...', apikey_help:'No API key? Get one free at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. $5/month credit is plenty.',
+    apikey_warning:'ℹ️ Currently you need to enter your API key before each use. This step will be removed soon with the account system.',
+    apikey_btn:'Start Using →',
+  }
+};
+
+var currentLang = localStorage.getItem('mp_lang') || 'tr';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mp_lang', lang);
+  applyLang();
+  document.querySelectorAll('.lang-btn').forEach(function(b) {
+    b.classList.toggle('active', b.textContent === lang.toUpperCase());
+  });
+  document.documentElement.lang = lang;
 }
 
-function selectPrice(el) {
-  document.querySelectorAll('.pay-price-btn').forEach(function(b) { b.classList.remove('selected'); });
-  el.classList.add('selected');
+function applyLang() {
+  var d = t[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (d[key] !== undefined) el.innerHTML = d[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (d[key] !== undefined) el.placeholder = d[key];
+  });
 }
 
+function openPayModal() { document.getElementById('payOverlay').classList.add('open'); }
+function selectPrice(el) { document.querySelectorAll('.pay-price-btn').forEach(function(b){b.classList.remove('selected');}); el.classList.add('selected'); }
 function onPayClick() {
   document.getElementById('payOverlay').classList.remove('open');
-  setTimeout(function() {
-    document.getElementById('apikeyOverlay').classList.add('open');
-  }, 200);
+  setTimeout(function() { document.getElementById('apikeyOverlay').classList.add('open'); }, 200);
 }
-
 function goToApp() {
   var key = document.getElementById('landingApiKey').value.trim();
-  if (!key) { alert('Lütfen API key\'ini gir.'); return; }
-  if (!key.startsWith('sk-ant-')) { alert('Geçersiz API key. sk-ant- ile başlamalı.'); return; }
+  if (!key) { alert(currentLang==='tr'?'Lütfen API key\'ini gir.':'Please enter your API key.'); return; }
+  if (!key.startsWith('sk-ant-')) { alert(currentLang==='tr'?'Geçersiz API key.':'Invalid API key.'); return; }
   localStorage.setItem('mp_api_key', key);
   window.location.href = 'app.html';
 }
+document.getElementById('payOverlay').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+document.getElementById('apikeyOverlay').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
-// Close on overlay click
-document.getElementById('payOverlay').addEventListener('click', function(e) {
-  if (e.target === this) this.classList.remove('open');
-});
-document.getElementById('apikeyOverlay').addEventListener('click', function(e) {
-  if (e.target === this) this.classList.remove('open');
-});
-
-// Dynamic floating cards
+// Floating cards
 var floatPersonas = [
-  { icon:'👩‍💼', name:'Sara Mitchell', role:'E-ticaret yöneticisi', stars:'★★★★☆' },
-  { icon:'👴', name:'Hasan Çevik', role:'Banka müşterisi', stars:'★★☆☆☆' },
-  { icon:'🧑‍💻', name:'Alex Turner', role:'SaaS kullanıcısı', stars:'★★★★★' },
-  { icon:'👩', name:'Zeynep Arslan', role:'Sağlık app kullanıcısı', stars:'★★★☆☆' },
-  { icon:'👨‍🔧', name:'Murat Yıldız', role:'Saha teknisyeni', stars:'★★★★☆' },
-  { icon:'👵', name:'Fatma Hanım', role:'Online alışveriş yapan', stars:'★★☆☆☆' },
-  { icon:'🧔', name:'David Chen', role:'Fintech kullanıcısı', stars:'★★★★★' },
-  { icon:'👩‍🎓', name:'Elif Şahin', role:'Öğrenci portal kullanıcısı', stars:'★★★☆☆' },
-  { icon:'👨‍💼', name:'Kemal Avcı', role:'Sigorta müşterisi', stars:'★★★★☆' },
-  { icon:'🧑', name:'Priya Sharma', role:'Mobil uygulama kullanıcısı', stars:'★★★★☆' },
+  {icon:'👩‍💼', name:'Sara Mitchell', role:{tr:'E-ticaret yöneticisi',en:'E-commerce manager'}, stars:'★★★★☆'},
+  {icon:'👴', name:'Hasan Çevik', role:{tr:'Banka müşterisi',en:'Bank customer'}, stars:'★★☆☆☆'},
+  {icon:'🧑‍💻', name:'Alex Turner', role:{tr:'SaaS kullanıcısı',en:'SaaS user'}, stars:'★★★★★'},
+  {icon:'👩', name:'Zeynep Arslan', role:{tr:'Sağlık app kullanıcısı',en:'Health app user'}, stars:'★★★☆☆'},
+  {icon:'👨‍🔧', name:'Murat Yıldız', role:{tr:'Saha teknisyeni',en:'Field technician'}, stars:'★★★★☆'},
+  {icon:'👵', name:'Fatma Hanım', role:{tr:'Online alışveriş yapan',en:'Online shopper'}, stars:'★★☆☆☆'},
+  {icon:'🧔', name:'David Chen', role:{tr:'Fintech kullanıcısı',en:'Fintech user'}, stars:'★★★★★'},
+  {icon:'👩‍🎓', name:'Elif Şahin', role:{tr:'Öğrenci portal kullanıcısı',en:'Student portal user'}, stars:'★★★☆☆'},
+  {icon:'👨‍💼', name:'Kemal Avcı', role:{tr:'Sigorta müşterisi',en:'Insurance customer'}, stars:'★★★★☆'},
+  {icon:'🧑', name:'Priya Sharma', role:{tr:'Mobil uygulama kullanıcısı',en:'Mobile app user'}, stars:'★★★★☆'},
 ];
-var fcIds = [1,2,3,4];
+
 function rotateFCards() {
   var shuffled = floatPersonas.slice().sort(function(){return Math.random()-0.5;});
-  fcIds.forEach(function(n, i) {
+  [1,2,3,4].forEach(function(n, i) {
     var p = shuffled[i];
-    var el = document.querySelector('.float-card-' + n);
-    if (!el) return;
-    el.style.opacity = '0';
-    el.style.transition = 'opacity 0.5s';
-    setTimeout(function() {
-      el.querySelector('.float-card-icon').textContent = p.icon;
-      el.querySelector('.float-card-name').textContent = p.name;
-      el.querySelector('.float-card-role').textContent = p.role;
-      el.querySelector('.float-card-score').textContent = p.stars;
-      el.style.opacity = '0.8';
+    var el = document.querySelector('.float-card-'+n);
+    if(!el) return;
+    el.style.opacity='0'; el.style.transition='opacity 0.5s';
+    setTimeout(function(){
+      el.querySelector('.float-card-icon').textContent=p.icon;
+      el.querySelector('.float-card-name').textContent=p.name;
+      el.querySelector('.float-card-role').textContent=p.role[currentLang]||p.role.tr;
+      el.querySelector('.float-card-score').textContent=p.stars;
+      el.style.opacity='0.85';
     }, 500);
   });
 }
 setInterval(rotateFCards, 4000);
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
+// Scroll reveal
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) { if(entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(function(el, i) {
   el.style.transitionDelay = (i % 4) * 0.08 + 's';
   observer.observe(el);
 });
+
+// Init
+setLang(currentLang);
 </script>
 </body>
 </html>
